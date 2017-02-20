@@ -5,6 +5,8 @@
  - Documentation: PB-VRVis-2001-006.pdf from
    <https://www.vrvis.at/publications/pdfs/PB-VRVis-2001-006.pdf>, retrieved
    2017/02/20
+    - English HTML: from <http://web.archive.org/web/20051122185426/http://ray.cg.tuwien.ac.at/rft/Papers/PYM/pym.html>, retrieved 2017/02/20
+    - Japanese HTML: by Yasuhiro Osawa, from <http://web.archive.org/web/20020606200518/http://www.sm.rim.or.jp/~osawa/top/PYM/pym.html>, retrieved 2017/02/20.
  - Source: pym.txt from <http://web.archive.org/web/20040928010140/http://ray.cg.tuwien.ac.at/rft/Papers/PYM/pym>, retrieved 2017/02/20
 
 ## License

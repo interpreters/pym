@@ -1,0 +1,904 @@
+<!-- converted date : Tue Mar 12 19:48:38 2002 -->
+<HTML>
+<HEAD>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app11.us.archive.org";archive_analytics.values.server_ms=197;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<TITLE>PYM - A Macro Preprocessor Based on Python</TITLE>
+
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+if ((navigator.appName == "Microsoft Internet Explorer")) {
+document.write("<LINK REL=stylesheet HREF=\"/web/20020606200518/http://www.python9.org/paper-sample/ie-html.css\" TYPE=\"text/css\">"); }
+else {
+document.write("<LINK REL=stylesheet HREF=\"/web/20020606200518/http://www.python9.org/paper-sample/nav-html.css\" TYPE=\"text/css\">"); }
+// -->
+
+</SCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white">
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "http://www.sm.rim.or.jp/~osawa/top/PYM/pym.html";
+
+var firstYear = 1996;
+var displayDay = "6";
+var displayMonth = "Jun";
+var displayYear = "2002";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(550, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="http://www.sm.rim.or.jp/~osawa/top/PYM/pym.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20020606200518" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    <a href="/web/20020505041312/http://www.sm.rim.or.jp/~osawa/top/PYM/pym.html" title="5 May 2002">MAY</a>
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 20:05:18 Jun 6, 2002">JUN</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20021202013335/http://www.sm.rim.or.jp/~osawa/top/PYM/pym.html" title="2 Dec 2002"><strong>DEC</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                   <a href="/web/20020505041312/http://www.sm.rim.or.jp/~osawa/top/PYM/pym.html" title="4:13:12 May 5, 2002"><img src="/static/images/toolbar/wm_tb_prv_on.png" alt="Previous capture" width="14" height="16" border="0" /></a>
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 20:05:18 Jun 6, 2002">6</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20021202013335/http://www.sm.rim.or.jp/~osawa/top/PYM/pym.html" title="1:33:35 Dec 2, 2002"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2001
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 20:05:18 Jun 6, 2002">2002</td>
+	       <td class="f" nowrap="nowrap">
+               
+	           <a href="/web/20030804022129/http://www.sm.rim.or.jp/~osawa/top/PYM/pym.html" title="4 Aug 2003"><strong>2003</strong></a>
+	       
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20020606200518*/http://www.sm.rim.or.jp/~osawa/top/PYM/pym.html" title="See a list of every capture for this URL">16 captures</a>
+           <div class="r" title="Timespan for captures of this URL">5 May 02 - 18 Jun 07</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="550"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=550_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:5:000011000001_2003:-1:000100010000_2004:-1:101001010012_2005:-1:011000000010_2006:-1:000000000000_2007:-1:000001000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:-1:000000000000_2016:-1:000000000000_2017:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+
+<h1>
+PYM - Pythonに基づいたマクロ・プリプロセッサ
+</h1>
+<h6>Robert F. Tobler<br>
+VRVis Research Center for Virtual Reality and Visualization<br>
+Vienna, Austria</h6>
+
+<h3>
+概要
+</h3>
+
+<p>
+さまざまの作業において、マクロ・プリプロセッサが必要になる場合がある。
+ほとんどのマクロ・プリプロセッサは、サポートする言語に対し構文的に結びついていたり
+（例：Cプロプロセッサやlispのマクロ機能）、又は目的とする特殊な機能に制限されていたり（cpp）、
+あるいは分りにくい構文を持つ場合もある（例：m4, chakotay）。
+</p>
+
+<p>
+私たちはPythonスクリプト言語に基づくマクロ・プリプロセッサ - PYM - を提案する。
+このマクロ・プリプロセッサでは、Pythonの表現力を完全に保ったままマクロを書ける。
+そのため、構文が分りにくくて使いにくいだとか機能に制限があるということがない。
+このマクロ・プリプロセッサを完全に実装すると、200行程度のPythonスクリプトになり、
+マクロ定義，マクロ展開，ファイル引用を行う3つの主だった関数を含む。
+Pythonの例外機構に利用することで、
+条件付きマクロ展開を行ごと又はまとめて全部打ち切れるように実装されている。
+マクロに基づいたVRMLファイルの生成と、
+動的webサーバ向けのマクロに基づくHTMLファイル生成にPYMが有用なことが示されている。
+</p>
+
+<h3>
+キーワード
+</h3>
+
+<p>
+マクロ・プリプロセッサ、pythonツール
+</p>
+
+<h3>
+1. はじめに
+</h3>
+
+<p>
+マクロツールは色々なプログラミング言語や仕様(definition)言語に導入されているが、その理由はさまざまである。
+理由をいくつか列挙する：
+</p>
+<ul>
+<li>
+元となる言語の表現力に制限がある（例：WEBシステム [Knuth]，各種のアセンブリ言語）。
+<li>
+インライン展開による最適化（<tt>cpp</tt>はしばしばこの目的に使われる）
+<li>
+一連の共通コードの定義/引用
+<li>
+モジュール構造を追加する（例：<tt>cpp</tt>）
+</ul>
+
+<p>
+言語にマクロツールを導入する理由がさまざまであるように、これらマクロツールの実装の在り方もさまざまである。
+プロプロセッサとしては実装されず、言語に密接に結びついたマクロツールもあるが、
+その場合、マクロ展開の過程は言語のパーサに直接統合されている。
+こうしたマクロツールの例はLISPのマクロツールである [Hart]。
+</p>
+
+<p>
+マクロツールはたいがいプロプロセッサとして実装され、
+そのため当初設計された言語用以外にも流用できないことはない。
+こうしたプロプロセッサで最も良く知られた例は、Cプリプロセッサである。
+けれども実際には、Cプリプロセッサは言語と無関係ではない。
+というのも、展開するシンボルを見つけるのに入力テキスト全体を探索し、
+開き括弧と閉じ括弧の数のバランスが取れるようマクロへの引数が走査されるからである。
+このため、一般的なプリプロセッサとして使おうとすると、
+応用範囲はCの形態素構造に類似の言語やテキストに制限される。
+</p>
+
+<p>
+マクロ・プリプロセッサのちょうど対局にあるのは、どの言語にも構文上の関係を持たないツールであり、
+マクロ定義の開始とマクロの使用を見つけるのに特殊なタグを使う。
+このようなマクロ・プリプロセッサの例はChakotayである [Probst]。
+</p>
+
+<h3>
+2. マクロ・プリプロセッサの一般的な動作
+</h3>
+
+<p>
+マクロ・プリプロセッサには主に2つの働きがある。
+</p>
+<ul>
+<li>マクロ定義
+<li>マクロ展開
+</ul>
+
+<p>
+良く知られたCプリプロセッサを例にとると、
+ハッシュ文字<tt>#</tt> を行頭の空白以外の文字として使うことで、
+プリプロセッサ命令を導入する。マクロ定義もこれらの命令の1つである。
+マクロ展開用にはCプリプロセッサは特殊なマクロを用いず、
+単に入力テキストを走査し、C言語で定義された形態素シンボルを探し、それらを展開する。
+</p>
+
+<p>
+Chakotay [Probst]などの他のプリプロセッサでは、マクロ定義とマクロ展開の導入用に特殊な文字を使う。
+このタイプのプリプロセッサはさらに一般的に適用可能であり、
+使われるべき言語やテキストの形態素構造に制限がない。
+</p>
+
+<p>
+上述の2つの基本的な働きに加え、オプションであるが、
+マクロ・プリプロセッサにより実行される第3の働きにファイルの引用がある。
+再度Cプリプロセッサを例に取ると、
+Cプリプロセッサでは、出力テキストに参照されたファイルの内容を展開するのに
+<tt>#include</tt>命令が導入されている。
+この機能によりコーディングにモジュール構造がもたらされので、
+プリプロセッサが用いられる元の言語の一部としてモジュール構造が備わっていなくても構わないのである。
+</p>
+
+
+<h3>
+3. PYMの動作
+</h3>
+
+<p>
+私たちには一歩一歩順に発展させられるプリプロセッサが必要だったのであるが、
+明示的に通知せずに(without explicit notification)テキストを変えてはならないというのも要求項目の１つだった。
+こうしたことをふまえて、マクロ定義とマクロ展開を特殊な文字あるいは文字列により目印付けすることにした。
+</p>
+
+<h4>
+マクロ定義
+</h4>
+
+<p>
+PYMでは定数マクロには文字列を保持する大域的なPython変数を使い、
+引数を受け付けるマクロには文字列を返すPython関数を使うことにした。
+つまり、PYMのマクロ定義フェーズは単なるPythonの大域変数とPython関数の定義に過ぎないのである。
+インデントに基づいた構文がある程度行を前提としているPythonにならい、
+PYMマクロを導入するのに行を前提とした特殊列を使うことにした。
+</p>
+
+<blockquote>
+<pre>
+#begin python
+
+#「マクロ」を定義するPythonコードはここにくる
+
+#end python
+</pre>
+</blockquote>
+
+<p>
+これらの特殊列2つで、ありのまま出力される文字としてのテキストと、
+実行用のPythonコードを切り替えることができる。
+</p>
+
+<p>
+しかしこれは機能の一部分でしかない。次に2番目の機能を説明する。
+</p>
+
+<h4>
+マクロ展開
+</h4>
+
+<p>
+マクロ展開を行うための開始列と終了列は、ユーザが選択できるようにしている。
+マクロ定義を導入する特殊列とは対照に、マクロ定義用の列は行のどこに現れてもよく、
+開始列と終了列は異なる行に置いてもよい。
+</p>
+
+<p>
+マクロ展開の開始列と終了列はユーザにより定義可能であるが、
+PYMをhtmlプリプロセッサとして利用する以下の全ての例では、既定値を使うことにする。
+既定の列とは、<FONT FACE="Courier New" SIZE=2>&lt;[</FONT>と
+<FONT FACE="Courier New" SIZE=2>]&gt;</FONT>（つまり"特殊"htmlタグ）の２つである。
+これら既定義の2つの列と既に述べたマクロ定義により、最初のPYMの例題を書く準備が整った。
+</p>
+
+<blockquote><pre>
+#begin python
+TITLE = "My Web page"
+def EXP(e): return str(e)
+#end python
+&lt;head&gt;
+&lt;title&gt;&lt;[TITLE]&gt;&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h4&gt;&lt;[TITLE]&gt;&lt;/h4&gt;
+&lt;p&gt;The value of 2 raised to the 4th power is &lt;[EXP(2**4)]&gt;.&lt;/p&gt;
+&lt;/body&gt;
+</pre></blockquote>
+
+<p>
+PYMを通してこれを走らせた結果は明らかだろう。
+</p>
+
+<blockquote><pre>
+&lt;head&gt;
+&lt;title&gt;My Web Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h4&gt;My Web Page&lt;/h4&gt;
+&lt;p&gt;The value of 2 raised to the 4th power is 16.&lt;/p&gt;
+&lt;/body&gt;
+</pre></blockquote>
+
+<p>
+PYMを使った別の例は付録Aを参照して欲しい。
+これら全ての例でHTMLコードの生成を用いる点について注意をしておく。
+このようにした理由は、単にHTMLが誰でも分るからというに過ぎない。
+3次元オブジェクトを既述しようとするとVRML 2.0ファイル形式では制限があったことが、
+PYMを書こうとした元々の動機である。PYMを使って、
+モジュール化されたVRMLマクロのセット上に組み上げることで複雑なVRMLコードを生成しているが、
+結果は良好である。
+</p>
+
+<h4>
+ファイルの引用
+</h4>
+
+<p>
+さて、これまで主なマクロ・プリプロセッサの機能を取扱ってきたので、
+ほとんどのプリプロセッサがサポートするもう一つの動作、ファイルの引用について考えてみよう。
+私たちはCプリプロセッサに似た構文を採用することにした。
+</p>
+
+<blockquote>
+<pre>
+#include "filename"
+</pre>
+</blockquote>
+
+<p>
+この機能の追加により、共通のコードとテキストを複数のファイル間で共有できる。
+マクロ定義列でPythonコードを実行しているので、Pythonのインポート機構に頼ることもできたのだが、
+ファイル引用をPYMのサポート機能としてはっきりと謳うことにした。
+そのため、マクロの定義に頼らずにテキスト群を直接引用することができる。
+</p>
+
+<h4>
+条件付きテキスト出力
+</h4>
+
+<p>
+いくつかのプリプロセッサでは条件付きテキスト出力をサポートしている。
+例えばCプリプロセッサは、<tt>#if <em>expr</em></tt>, <tt>#elif <em>expr</em></tt>,
+<tt>#else</tt>, <tt>#endif</tt>命令を持っている。
+PYMの式が標準的なPython式であるため、PYMでもこの機能がサポートされている。
+</p>
+
+<p>
+この標準的な機構に加え次の2つの裏技(trick)もサポートされている。場合によってはこちらの方が便利だろう。
+</p>
+
+<p>
+第1の裏技は<EM>計算値による引用</EM>である。引用文の後ろのファイル名をPython式にしてしまうのである。
+式には文字列そのものだけでなく、引用されるべきファイルのファイル名を返す関数も使える。
+この方法により、任意の条件に基づいてテキストを引用することが可能である。
+</p>
+
+<p>
+第2の裏技は、<em>信号によるマクロ展開の停止</em>である。
+マクロを定義中あるいはマクロ展開中にかかわらず、PYMではPythonコードが実行される時は、
+いつでもPYMの出力に影響を与えるコードから明示的に2つの例外のいずれかを発する可能性がある。
+発せられる例外とは、<tt>PymEndOfFile</tt>>か<tt>PymExit</tt>のいずれかである。
+</p>
+
+<p>
+<tt>PymEndOfFile</tt>が発せられると、直ちに現在のテキスト出力が停止され、
+ファイル引用の前のレベルに戻ってマクロ展開が継続される。
+<tt>PymExit</tt>が発せられると、テキスト出力は完全に停止する。
+</p>
+
+<p>
+これら2つの機能により、条件付きテキスト出力をかなり容易に制御できる。
+PYMで扱わなくてはならない機能はそれほど増えない。
+</p>
+
+<h4>
+実装メモ
+</h4>
+
+<p>
+PYMの実装は主に4つの構文解析作業からなる。
+</p>
+<ul>
+<li>Pythonマクロ定義の走査
+<li>ファイルの引用
+<li>条件付き出力
+<li>Pythonマクロの展開
+</ul>
+
+<p>
+始めの3つの作業は行を前提としたパーサで扱われる。
+このパーサはPythonコード群を探索・実行し、引用行を探索して再帰的にファイルを展開する。
+そしてif-elif-else-endif列を探索し、関連するテキストを条件付き出力する。
+</p>
+
+<p>
+4番目の作業は、マクロ展開用の開始列と終了列を探索し、
+これら2つの列で挟まれた式をPython式として評価することで処理される。
+マクロ展開は、特殊列が見つからなくなるまで各式の結果に対し再帰的に適用される。
+</p>
+
+<p>
+マクロ定義用のPythonコード，マクロ展開用のPython式，条件，計算値による引用ファイル名、
+これら全ては、PYM自身の大域名前空間とは別の、同一環境で実行される。
+マクロ展開を停止するのに使われる2つの例外クラスはPYMの大域名前空間で定義され、
+マクロ定義，マクロ展開で使われる環境にも同じ例外が導入されるので、
+これらの例外が2つの実行環境間で情報の伝達するのに使えるのである。
+</p>
+
+<h3>
+4. マクロ・プリプロセッサを実装するにあたりPythonを使う利点
+</h3>
+
+<p>
+PYMの基礎となる言語にPythonを用いることには幾つかの利点がある。以下にそれを列挙する。
+</p>
+<ul>
+<li>
+<em>複行文字列</em>：
+定義したいマクロが、出力に直接流し込むテキスト群であることが往々にしてある。
+Pythonの複行文字列を使えば、必要なテキスト群を持ってきて3重引用符で囲み、
+名前をつけて変数に代入しさえすれば、マクロとして使える。
+
+<li>
+<em>文字列用の<tt>%</tt>演算子</em>：
+これによりテキスト群を簡単にパラメータ化できるので、それをパラメータ付きマクロとして利用できる。
+<li>
+<em>名前付き関数引数・既定値付き関数引数</em>：
+名前付き関数引数と引数値に既定値を定義できるPythonの機能を使えば、
+パラメータに既定値を持つマクロのプログラムや、値の置き換えが必要なパラメータの名前指定ができる。
+</ul>
+
+<p>
+これら全てのPythonの特徴により、PYMを大変快適なマクロ・プリプロセッサとすることができる
+（簡単なマニュアルは付録Bを参照）。
+もちろんこの他にもPythonを大変快適なプログラミング言語たらしめている特徴はある。
+類似の拡張は、例えばPerlなど他の言語に対しても適用可能であるが、
+Pythonの簡潔で使いやすい構文は、著者が知る他のマクロ言語よりもかなり可読性が良いという利点をもたらす
+（例えば、M4 [Kernighan], autogen [Korb], and chakotay [Probst]と比較して）。
+それだけでなく、PYMはPythonの全ての拡張モジュールの恩恵を受けており、
+PYMがPythonの全ての機能にアクセスしているように、プリプロセッサに特有の機能を再実装する必要がない。
+もちろんこれは専用プリプロセッサでは得られない利点である。
+</p>
+
+<h3>
+5. 実装に関する考察
+</h3>
+
+<p>
+出力結果に直接流し込まれるテキストの中に埋め込まれたPythonコードを実行すると、
+Pythonから見た行番号とファイル中の実際の行番号の間にずれが生じる。
+そのため、Pythonコード内のエラーに遭遇した時に誤った行番号が報告される。
+それだけでなく、Pythonにはエラーが生じたファイル名がどれだか分らない。
+</p>
+
+<p>
+この問題を修正するには、各種のエラーに対する例外をPYMで補足し、
+例外が再度発せられる前に、これらの例外にある行番号とファイル名を正しておけばよい。
+Pythonがどの例外にも行番号とファイル名情報を持たせていれば、これは大した作業ではないだろう。
+ただし実際はそうではない。Python例外の中には行番号とファイル名情報を持たないものもあるからである。
+</p>
+
+<p>
+こうした理由から、PYMはエラーが生じたと思われる行番号とファイル名を報告できない。
+私はこれをPythonのちょっと残念な欠点と考えている。というのも、
+Python例外が行番号とファイル名のフィールドを持っていさえすれば、
+この種の操作を容易に実装できるようになるからである。
+</p>
+
+<h3>
+6. 結論と今後の展開
+</h3>
+
+<p>
+Python言語に基づくマクロ・プリプロセッサ - PYM - を紹介した。
+このマクロ・プリプロセッサを使えば、
+Python以外の任意の言語やテキストファイルに対するマクロをPythonで定義できるようになる。
+手軽にPythonの全ての表現力を使えるため、マクロ定義が単純化されマクロコードの可読性が向上する。
+PYMの他の面白い特徴としては、200行以下のコードでコンパクトに実装（付録Cを参照）されていることもあげられる。
+</p>
+
+<p>
+PYMのコンパクトさのため、セキュリティや条件式といった事に関する問題はPythonに任されている
+（あるいは、?:演算子が欠けているので、任されているとは言えないだろうか？）。
+</p>
+
+<p>
+PYMの実行性能についてはまだ詳しく検討していない。
+Pythonのコード群とPython式を探すという2つの構文解析作業は、Pythonで書かれた関数で扱われるのだが、
+そのコストは極端に高くはないだろうと予想されるからである。
+PYMの最重要課題は可読性であり、それため実行性能については全く考慮しなかった。
+より速いPYMパーサの必要が生じた場合は、これらの2つの関数を最適化し、
+場合によってはCによって再実装すべきなのは明らかである。
+</p>
+
+<p>
+複雑なVRMLコード生成と写真撮影のウェブサイト
+<a href="/web/20020606200518/http://ray.cg.tuwien.ac.at/rft/Photography/">http://ray.cg.tuwien.ac.at/rft/Photography/</a>の実装に使われ続けていることは、
+様々な問題に対してPYMが適用できる証しである。
+</a>
+
+<H3>
+7. 参考文献
+</H3>
+
+<UL>
+
+<LI>[Hart], Timothy P. (1963), "MACRO Definitions for LISP", AI Memo,
+Massachusetts Institute of Technology, USA.
+
+<LI>[Kernighan], B.W., and Ritchie, D.M. (1979), "The M4 Macro Processor", Unix
+Programmer's Manual, Comp. Sci. Tech. Rep. No. 2, Bell Labs, Murray Hill,
+N.J.
+
+<LI>[Korb], Bruce (1992), "Augogen - The Automated Program Generator" <a
+href="/web/20020606200518/http://autogen.sourceforge.net/">http://autogen.sourceforge.net/</a>
+(accessed 01/15/01)
+
+<LI>[Knuth], Donald E. (1982), "The WEB System of Structured Documentation",
+Stanford University, CA, USA.
+
+<LI>[Probst], Mark, and Deinhart, Heinz (1998), "Chakotay - a preprocessor
+that can be applied to a myriad of applications" <A
+HREF="/web/20020606200518/http://www.complang.tuwien.ac.at/~schani/chpp/">
+http://www.complang.tuwien.ac.at/~schani/chpp/</A> (accessed 11/05/00)
+
+</UL>
+
+<h3>
+付録A：PYMを使った短い例題
+</h3>
+
+<p>
+章や図を幾つも含むHTMLページを生成したいとする。
+全体の機能はファイル<tt>number.pym</tt>の中に置き、
+どのHTMLファイルからも引用できるようにしておく。
+</p>
+
+<blockquote>
+<pre>
+#begin python
+NUMBER_MAP = {}
+
+def NUM(tag):
+    num = NUMBER_MAP.get(tag, 0) + 1
+    NUMBER_MAP[tag] = num
+    return str(num)
+#end python
+</pre>
+</blockquote>
+
+<p>
+これを使えば、ファイル<tt>page.html</tt>では次のようになるだろう。
+</p>
+
+<blockquote>
+<pre>
+#include "number.pym"
+ 
+&lt;h4&gt;&lt;[NUM("h4")]&gt; Introduction&lt;/h4&gt;
+&lt;p&gt;Figure &lt;[NUM("fig")]&gt;&lt;/p&gt;
+&lt;h4&gt;&lt;[NUM("h4")]&gt; Why do we number Chapters?&lt;/h4&gt;
+&lt;h4&gt;&lt;[NUM("h4")]&gt; Why do we number figures?&lt;/h4&gt;
+&lt;p&gt;Figure &lt;[NUM("fig")]&gt;&lt;/p&gt;
+</pre>
+</blockquote>
+
+<p>
+<tt>pym page.pym</tt>とタイプしてこの例題をPYMに渡せば、
+その結果次のような出力となる。
+
+</p>
+
+<blockquote>
+<pre>
+ 
+&lt;h4&gt;1 Introduction&lt;/h4&gt;
+&lt;p&gt;Figure 1&lt;/p&gt;
+&lt;h4&gt;2 Why do we number Chapters?&lt;/h4&gt;
+&lt;h4&gt;3 Why do we number figures?&lt;/h4&gt;
+&lt;p&gt;Figure 2&lt;/p&gt;
+</pre>
+</blockquote>
+
+<h3>
+付録B：PYMの小マニュアル
+</h3>
+
+<p>
+pymはコマンドライン・ツールで、次のように呼びだす。
+</p>
+
+<blockquote>
+<pre>
+pym <em>[options]</em><em>filename</em>
+</pre>
+</blockquote>
+
+<p>
+これでファイル<em>filename</em>がマクロ展開され、結果は標準出力へ出力される。
+PYMは特定の拡張子を指定しないが、ファイルがPYMを通して走らす必要があることを示すため、
+私たちは慣例として<tt>.pym</tt>を用いている。
+</p>
+
+<p>
+現在のPYMは1つのオプションしか理解しない。そのオプションとは<tt>-I <em>directory</em></tt>で、
+Pythonの引用パス<tt>PYM_PATH</tt>に、与えられたディレクトリdirectoryを追加するものである。
+ディレクトリが相対パスで与えられている場合は、PYMを呼びだしたディレクトリに対する相対パスとみなされる。
+引用オプションを複数回使うことで、複数のディレクトリを引用パスに追加することができる。
+</p>
+
+<p>
+PYMを通してファイルを走らせると、次の2本の行で囲まれたPythonコードの各列が実行される。
+</p>
+
+<blockquote><pre>
+#begin python
+<em>python-code</em>
+#end python
+</pre></blockquote>
+
+<p>
+次の形式で書かれた<em>filename</em>の各行は、
+</p>
+
+<blockquote><pre>
+#include <em>file-name-expression</em>
+</pre></blockquote>
+
+<p>
+ファイル名式<em>file-name-expression</em>はPython式として評価される。
+その結果得られる文字列は、引用行の代りに出力へ流し込まれるファイルのファイル名として扱われる。
+引用ファイルは再帰的にマクロ定義とマクロ展開用の全ての規則が適用される。
+二重引用符で囲われたファイル名は正しいPython式であり、引用ファイル名として利用できることに注意して欲しい。
+</p>
+
+<blockquote><pre>
+#include "<em>file-name</em>"
+</pre></blockquote>
+
+<p>
+引用文で指定されたファイルを探すために、目的のファイルはまず引用ファイルに対して相対的に探索される。
+これが失敗すると、Python引用パス<tt>PYM_PATH</tt>にあるディレクトリが、
+一致するファイルが見つかるまで１つ１つ検査される。
+今のところ、一致するファイルが見つからない場合は何の報告もしない。
+</p>
+
+<p>
+条件付きテキスト出力と条件付きマクロ定義を楽に行なえるように、
+次の構文をサポートしている（<tt>#elif</tt>ブロックは幾つあっても良く、
+ゼロ個でも良いことに注意して欲しい）。
+</p>
+
+<blockquote><pre>
+#if <em>python-expression</em>
+text block
+#elif <em>python-expression</em>
+text block
+#else
+text block
+#endif
+</pre></blockquote>
+
+<p>
+python-expressionsの各式が評価され、結果が真なら次のブロックが出力にまわされる。
+評価結果が偽なら次のテキストブロックは抑制され、テキスト内のPythonコードは実行されない。
+<tt>#else</tt>ブロックに続くブロックが出力にまわされるのは、
+その前のブロックが抑制された場合である。
+</p>
+
+
+<p>
+ファイル名<em>filename</em>内の他の全てのテキストはマクロ展開が施される。
+次の形式の各列は、
+</p>
+
+<blockquote><pre>
+&lt;[<em>python-expression</em>]&gt;
+</pre></blockquote>
+
+<p>
+Python式<EM>python-expression</EM>を評価した結果で置き換えられ、
+こうした列はどれも展開された出力により再帰的に置き換えられる。
+この再帰的展開は、
+2つの文字の列、つまり開始式と終了式(<tt>&lt;[</tt>, と <tt>]&gt;</tt>, 全4文字)
+の長さの和より短かい列には適用されないことに注意してほしい。
+そのため、完全なpython-expressionの評価結果から2つの列のどちらかが得られるならば、
+これらの2つの列自身を生成することもできるのである。
+この再帰的処理は個々のpython-expressionの結果について各々実行されるだけなので、
+結果を連結した文字列は変更されずにそのままとなる。
+</p>
+
+<p>
+次のように、実行されるPythonコード内で、Python式を開始・終了をさせる2つの特殊文字列を、
+別の文字列に設定することもできる。
+</p>
+
+<blockquote><pre>
+PYM_EXPRESSION = ("<em>start-sequence</em>", "<em>end-sequence</em>")
+</pre></blockquote>
+
+<p>
+出力を標準出力にただ印字する代りにファイルに書き込まなくてはならない場合、
+実行されるPythonコード内であれば、どこでも結果ファイルの拡張子を指定することができる。
+</p>
+
+<blockquote><pre>
+PYM_EXTENSION = "<em>output-extension</em>"
+</pre></blockquote>
+
+<p>
+実行されるPythonコード内であれば、次の文により、どこでも現在のファイルに対する出力を停止することができる。
+</p>
+
+<blockquote><pre>
+raise PymEndOfFile
+</pre></blockquote>
+
+<p>
+実行されるPythonコード内であれば、次の文により、どこでも出力を完全に停止することができる。
+</p>
+
+<blockquote><pre>
+raise PymExit
+</pre></blockquote>
+
+<p>
+以下のように、引用ファイルの検索パスの範囲を、実行されるPythonコード内で広げることができる。
+</p>
+
+<blockquote><pre>
+PYM_PATH.append("<em>directory</em>")
+</pre></blockquote>
+
+<h3>
+付録C：httpサーバと共にPYMを使う
+</h3>
+
+<p>
+PYMが適するアプリケーションに、PYMのソースに基づいたhtmlページの動的生成がある。
+これを簡単に実現するため、PYMは、標準httpサーバインターフェースの一部である環境変数<tt>DOCMENT_ROOT</tt>を検査する。
+環境変数<tt>PATH_TRANSLATED</tt>はhttpサーバから要求されたファイルの在りかを特定するのに使われる。
+PYMファイルの引用は特定された場所でファイル検索を開始するように、
+<tt>DOCUMENT_ROOT</tt>は<tt>PYM_PATH</tt> にも追加される。
+サーバに、拡張子<tt>.pym</tt>の各ファイルをPYMコマンドでフィルタするように伝えることで、
+ウェブサイト全体をPYMマクロで実装することも可能である。
+</p>
+
+<p>
+例えば、拡張子<tt>.pym</tt>の各ファイルをPYMコマンドでフィルタするよう
+apacheウェブサーバ(http://www.apache.org/)を設定するには、
+<tt>httpd.conf</tt>の各場所に次の命令を追加すればよい。
+</p>
+
+<blockquote><pre>
+    DirectoryIndex index.pym index.html
+    ...
+    AddType application/x-httpd-pym .pym
+    ...
+    Action application/x-httpd-pym /cgi-bin/pym.py                                  
+</pre></blockquote>
+
+<h3>
+付録D：PYMのソースコード
+</h3>
+
+<p>
+2001年1月15日時点で、PYMのソースコードは200行に満たない。
+ちなみに、PYMに関する事は全て
+<a href="/web/20020606200518/http://ray.cg.tuwien.ac.at/rft/Papers/PYM/">http://ray.cg.tuwien.ac.at/rft/Papers/PYM/</a>
+で得られる。
+</p>
+
+</BODY>
+</HTML>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 20:05:18 Jun 6, 2002 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 17:07:07 Feb 20, 2017.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

@@ -1,0 +1,789 @@
+<HTML>
+<HEAD>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app7.us.archive.org";archive_analytics.values.server_ms=401;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+
+<TITLE>PYM - A Macro Preprocessor Based on Python</TITLE>
+
+<SCRIPT LANGUAGE="JavaScript">
+
+<!--
+if ((navigator.appName == "Microsoft Internet Explorer")) {
+document.write("<LINK REL=stylesheet HREF=\"/web/20051122185426/http://www.python9.org/paper-sample/ie-html.css\" TYPE=\"text/css\">"); }
+else {
+document.write("<LINK REL=stylesheet HREF=\"/web/20051122185426/http://www.python9.org/paper-sample/nav-html.css\" TYPE=\"text/css\">"); }
+// -->
+
+</SCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white">
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "http://ray.cg.tuwien.ac.at/rft/Papers/PYM/pym.html";
+
+var firstYear = 1996;
+var displayDay = "22";
+var displayMonth = "Nov";
+var displayYear = "2005";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(550, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="http://ray.cg.tuwien.ac.at/rft/Papers/PYM/pym.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20051122185426" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    <a href="/web/20040623064326/http://ray.cg.tuwien.ac.at/rft/Papers/PYM/pym.html" title="23 Jun 2004">JUN</a>
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 18:54:26 Nov 22, 2005">NOV</td>
+		<td class="f" nowrap="nowrap">
+		
+		    Dec
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                   <a href="/web/20040623064326/http://ray.cg.tuwien.ac.at/rft/Papers/PYM/pym.html" title="6:43:26 Jun 23, 2004"><img src="/static/images/toolbar/wm_tb_prv_on.png" alt="Previous capture" width="14" height="16" border="0" /></a>
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 18:54:26 Nov 22, 2005">22</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   <img src="/static/images/toolbar/wm_tb_nxt_off.png" alt="Next capture" width="14" height="16" border="0"/>
+               
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   <a href="/web/20040623064326/http://ray.cg.tuwien.ac.at/rft/Papers/PYM/pym.html" title="23 Jun 2004"><strong>2004</strong></a>
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 18:54:26 Nov 22, 2005">2005</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2006
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20051122185426*/http://ray.cg.tuwien.ac.at/rft/Papers/PYM/pym.html" title="See a list of every capture for this URL">11 captures</a>
+           <div class="r" title="Timespan for captures of this URL">5 Aug 02 - 22 Nov 05</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="550"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=550_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000010101_2003:-1:010101000100_2004:-1:100101000000_2005:10:000000000010_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:-1:000000000000_2016:-1:000000000000_2017:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+
+
+<h1>PYM - A Macro Preprocessor Based on Python</h1>
+<h6>Robert F. Tobler<br>
+VRVis Research Center for Virtual Reality and Visualization<br>
+Vienna, Austria</h6>
+
+<h3>Abstract</h3>
+
+<p>In a number of tasks the need for a macro preprocessor arises. Most macro
+preprocessors, are either syntactically tied to the language they support
+(e.g., cpp, the C preprocessor, or the lisp macro facility), or they are
+limited in their functionality (cpp), or may even have an arcane syntax (e.g.
+m4, chakotay).</p>
+
+<p>We propose a macro preprocessor - PYM - based on the Python scripting
+language, which retains the complete expressivity of Python for writing
+macros, and thus is not limited by an arcane syntax or a limitation in its
+functionality. The complete implementation of this macro preprocessor is a
+Python script of around 200 lines of code, and includes the three main
+functions of macro definition, macro expansion, and file inclusion. Using
+Python's exception mechanism, conditional termination of expansion both on a
+per file, and overall level has been implemented. PYM has been shown to be
+useful for macro based generation of VRML files, and for macro based
+generation of HTML files for a dynamic web server.</p>
+
+<h3>Keywords</h3>
+
+<p>macro preprocessor, python tool</p>
+
+<h3>1. Introduction</h3>
+
+<p>Macro facilities have been introduced to various programming and
+defintion languages for a variety of reasons. Among these reasons are:</p>
+<ul>
+<li>limited expressive power of the base language (e.g. the WEB system
+[Knuth], various assembly languages).
+<li>optimization by inline expansion (<tt>cpp</tt> was often used for this)
+<li>definition/inclusion of common code sequences
+<li>addition of a module structure (e.g. <tt>cpp</tt>)
+</ul>
+
+<p>As varied as the reasons for introducing a macro facility to a languages,
+are the actual implementations of these facilities. Some macro facilties are
+not implemented as preprocessors, but are tightly tied to the language, so
+that the macro expansion process is directly integrated into the language
+parser. An example for such a macro facility is the LISP macro facility
+[Hart].</p>
+
+<p>Most macro facilities are implemented as preprocessors, and are thus
+potentially usable not only for the language for which they were designed.
+The most well-known example for such a preprocessor is the C preprocessor.
+The C Preprocessor is however also tied to its language by the fact, that it
+searches the whole input text for symbols to expand, and the arguments to
+macros are scanned so that they contain a balanced number of opening and
+closing parantheses. Therefore its use as a generalized preprocessor is
+limited to languages or texts which have a similar lexical structure to
+C.</p>
+
+<p>On the very other end of macro preprocessors are facilties that have no
+syntactical relation to any language, and use special tags for starting
+definitions of macros and use of macros. An example of such a macro
+preprocessor is Chakotay [Probst]</p>
+
+<h3>2. General Operation of a Macro Preprocessor</h3>
+
+<p>There are two main operations of a macro preprocessor:</p>
+<ul>
+<li>macro definition
+<li>macro expansion
+</ul>
+
+<p>The well-known C preprocessor, as an example, uses the hash character
+<tt>#</tt> as the first non-space character in a line to introduce
+preprocessor commands, and defining macros is one of these commands. For
+macro expansion, the C preprocessor doesn't use a special macro, it just
+scans the input text for lexical symbols as defined by the C language, and
+expands these.</p>
+
+<p>Other preprocessors such as Chakotay [Probst] use special characters to
+introduce both macro definition and macro expansion. This type of
+preprocessor is more generally applicable, as there is no restriction on the
+lexical structure of the language or text for which it is used.</p>
+
+<p>In addtion to the two basic operations described above, a third, optional
+operation that can be performed by a macro preprocessor is file inclusion. If
+we take the C preprocessor as an example again, it introduces the
+<tt>#include</tt> command to expand the content of a referenced file in the
+output text. This facilitates a modularized structure of coding which may not
+be part of the original language that the preprocessor is used for.</p>
+
+
+<h3>3. PYM operation</h3>
+
+<p>As we needed a preprocessor that can be phased in step by step, one of our
+requirements was that it should not change any text without explicit
+notification. Thus we decided to mark both macro definition and macro
+expansion with special characters or character sequences.</p>
+
+<h4>Macro Definition</h4>
+
+<p>We decided that global Python variables containing strings should be used
+in PYM as constant macros, and Python functions returning strings should be
+macros accepting arguments. Thus the macro definition phase of PYM is just
+the definition of Python globals and Python functions. As Python, with its
+indentation based syntax is somewhat line-based, we decided to use a line
+based special sequence to introduce PYM macros:</p>
+
+<blockquote>
+<pre>
+#begin python
+
+#python code for defining "macros" goes here
+
+#end python
+</pre>
+</blockquote>
+
+<p>With these two special sequences it is possible to switch between literal
+text that is directly output, and Python code that is executed.</p>
+
+<p>This is however only one part of the functionality. The second one is</p>
+
+<h4>Macro Expansion</h4>
+
+<p>For macro expansion we leave the choice of start and end sequences to the
+user. In contrast to the sequences for introducing macro definition, the
+sequences for macro expansion can appear anywhere in a line, and the start
+and end sequence can be placed on different lines.</p>
+
+<p>Although the starting and ending sequence are user definable, we will use
+the defaults for using PYM as a html preprocessor in all examples that will
+follow. These two sequences are <tt>&lt;[</tt> and <tt>]&gt;</tt> (i.e.
+"special" html tags). With these two sequences defined, and the macro
+definition explained earlier we can write our first little PYM example:</p>
+
+<blockquote><pre>
+#begin python
+TITLE = "My Web page"
+def EXP(e): return str(e)
+#end python
+&lt;head&gt;
+&lt;title&gt;&lt;[TITLE]&gt;&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h4&gt;&lt;[TITLE]&gt;&lt;/h4&gt;
+&lt;p&gt;The value of 2 raised to the 4th power is &lt;[EXP(2**4)]&gt;.&lt;/p&gt;
+&lt;/body&gt;
+</pre></blockquote>
+
+<p>The output of running this through PYM should be obvious:</p>
+
+<blockquote><pre>
+&lt;head&gt;
+&lt;title&gt;My Web Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h4&gt;My Web Page&lt;/h4&gt;
+&lt;p&gt;The value of 2 raised to the 4th power is 16.&lt;/p&gt;
+&lt;/body&gt;
+</pre></blockquote>
+
+<p>For another example of using PYM, see appendix A. Note that we use the
+generation of HTML code as a basis for all these examples. This is only due
+to the fact that most people understand HTML. The original motivation for
+writing PYM were the limitiations in the VRML 2.0 file format for describing
+3 dimensional objects. PYM has been successfully used to generate quite
+complex VRML code by building on a modularized set of VRML macros.</p>
+
+<h4>File Inclusion</h4>
+
+<p>Now that the main functionality of a macro preprocessor has been covered,
+we can think of the one operation that most preprocessors support in
+addition: file inclusion. We decided to use a syntax similar to the C
+preprocessor for including files:</p>
+
+<blockquote>
+<pre>
+#include "filename"
+</pre>
+</blockquote>
+
+<p>With this addition common code and text can be shared by multiple files.
+Although we could have relied on Python's import mechanism, since we are
+executing Python code in the macro definition sequences, we decided to make
+file inclusion an explicitly supported feature of PYM, so that blocks of text
+can be directly included without resorting to the definition of macros.</p>
+
+<h4>Conditional Text output</h4>
+
+<p>A number of preprocessors support conditional text output. As an example
+the C preprocessor has the <tt>#if <em>expr</em></tt>, <tt>#elif
+<em>expr</em></tt>, <tt>#else</tt>, and <tt>#endif</tt> directives. This is
+supported by PYM with the expressions being standard Python expressions.</p>
+
+<p>In addition to this standard mechanism, the following two tricks are
+supported, which may be more convenient in some circumstances</p>
+
+<p>The first one of these tricks is <em>computed include</em>: we have made
+the filename behind the include statement an actual Python expression. So not
+only a direct string but also a function can be used that returns the
+filename of the file to be included. Thereby it is possible to include text
+based on arbitrary conditions.</p>
+
+<p>The second trick is <em>signalled termination of expansion</em>: whenever
+Python code is executed in PYM, either while defining macros or while
+expanding macros, one of two exceptions may be explicitly raised by the code
+in order to affect PYM output: <tt>PymEndOfFile</tt> or <tt>PymExit</tt>.</p>
+
+<p>Raising <tt>PymEndOfFile</tt> immediately terminates text output of the
+current file, continuing expansion at the previous level of file inclusion.
+Raising <tt>PymExit</tt> completely terminates text output.</p>
+
+<p>With these two facilities conditional text output is fairly easily
+controlled, without too much additional functionality that has to be handled
+by PYM.</p>
+
+<h4>Implementation Notes</h4>
+
+<p>Implementing PYM consists of four major parsing tasks:</p>
+<ul>
+<li>scanning for Python macro definitions
+<li>including files
+<li>conditional output
+<li>expanding Python macros
+</ul>
+
+<p>The first three tasks are handled by a line based parser, that searches
+for blocks of Python code and executes them, for include lines and
+recursively expands files, and for if-elif-else-endif sequences and
+conditionally outputs the relevant text.</p>
+
+<p>The fourth task is handled by searching for pairs of the begin and end
+sequences for macro expansion, and evaluating the expression between these
+two sequences as a Python expression. Macro expansion is recursively applied
+to the result of each expression until no more special sequences are found.
+</p>
+
+<p>The Python code for macro definition, the Python expressions for macro
+expansion, conditions, and the computed include file name are all executed in
+the same environment that is separate from the global name spaces of PYM
+itself. The two exception classes used for termination of expansion are
+defined in the global name space of PYM and mirrored in the environment used
+for macro definition and expansion, so that they can be used to communicate
+between these two execution environments.</p>
+
+<h3>4. Advantages of Python for implementing a macro preprocessor</h3>
+
+<p>Using Python as a base language for PYM had a number of advantages, among
+these are:</p>
+<ul>
+<li><em>Multi-line strings</em>: Often the macros that need to be defined are
+blocks of text that need to be directly streamed to the output. Python's
+multi-line strings make it possible to simply take the desired text block,
+surround it with triple quotes, give it a name by assigning it to a variable
+and use it as a macro.
+<li><em>the <tt>%</tt> operator for strings</em>: this makes it possible to
+take text blocks and easily parametrize them and use them as parametrized
+macros.
+<li><em>named and default function arguments</em>: with Python's facility for
+using named function arguments, and define default argument values, it is
+possible to program macros that already have default values for their
+parameters, and parameters that need to be overridden can be specified by
+name.
+</ul>
+
+<p>All of these Python features make PYM a very comfortable macro
+preprocessor (see appendix B for a short manual). These are of course also
+some of the features that make Python a very comfortable programming
+language. A similar extension could be applied to any other scripting
+languages, such as Perl for example, but the clear and easy syntax of Python
+serves as an additional advantage which makes programming macros, quite a bit
+more readable than any other macro lanaguage known to the author (e.g.
+compared to M4 [Kernighan], autogen [Korb], and chakotay [Probst]). In addtion
+to that, PYM profits from all extensions to python, there is no need to
+reimplement a feature specifically for the preprocessor, as PYM has access to
+all python features. This of course is an advantage that is not shared by any
+dedicated preprocessor.
+
+</p>
+
+<h3>5. Implementation Issues</h3>
+
+<p>Executing Python code that is embedded into text that is directly streamed
+to the output results in an offset between Python's notion of what the line
+number is and the actual line number in the file. When errors in the Python
+code are encountered, wrong line numbers will therefore be reported. In
+addtion to that Python does not know about the file name where ther error
+appeared.</p>
+
+<p>In order to fix this, the exceptions for various errors are caught by PYM
+and the linenumber anf filename fields in these exeptions are corrected
+before they are reraised. This would be a straightforward job, if every
+exception in Python had a linenumber and a filename field. However this is
+not the case: some Python exceptions do not have linenumber and filename
+fields.</p>
+
+<p>For this reason PYM is not able to report the linenumber and filename in
+which an error occured reliably. I consider this to be a small shortcoming of
+Python, as every Python exception should just contain a filename and
+linenumber field, so that this kind of operation can be easily
+implemented.</p>
+
+<h3>6. Conclusions and future work</h3>
+
+<p>A macro preprocessor based on the Python language - PYM - has been
+introduced, that makes it possible to use Python for defining macros for
+arbitrary other languages or text files. With the full expressivity of Python
+at hand this preprocessor simplifies the definition of macros, and increases
+the readability of macro code.  Another nice feature of PYM is its compact
+implementation (see appendix C) of less than 200 lines of code.</p>
+
+<p>Due to the compactness of PYM, issues such as security and conditional
+expressions are left (or not left, since the ?: operator is missing) to
+Python.</p>
+
+<p>The performance of PYM has not been investigated, and since the two
+parsing tasks of finding Python code blocks, and Python expressions are
+handled by functions written in Python it is not expected to be
+overwhelmingly high. The main target of PYM was readability, and thus the
+performance was never under consideration. If there is enough demand for a
+faster PYM parser arises, these two functions are the obvious targets for
+optimization, and possible reimplementation in C.</p>
+
+<p>The applicability of PYM to various problem has been verified by
+generating rather complex VRML code with it, and by implementing a
+photography web site: <a
+href="/web/20051122185426/http://ray.cg.tuwien.ac.at/rft/Photography/">http://ray.cg.tuwien.ac.at/rft/Photography/</a>.
+</a>
+
+<H3>7. References</H3>
+
+<UL>
+
+<LI>[Hart], Timothy P. (1963), "MACRO Definitions for LISP", AI Memo,
+Massachusetts Institute of Technology, USA.
+
+<LI>[Kernighan], B.W., and Ritchie, D.M. (1979), "The M4 Macro Processor", Unix
+Programmer's Manual, Comp. Sci. Tech. Rep. No. 2, Bell Labs, Murray Hill,
+N.J.
+
+<LI>[Korb], Bruce (1992), "Augogen - The Automated Program Generator" <a
+href="/web/20051122185426/http://autogen.sourceforge.net/">http://autogen.sourceforge.net/</a>
+(accessed 01/15/01)
+
+<LI>[Knuth], Donald E. (1982), "The WEB System of Structured Documentation",
+Stanford University, CA, USA.
+
+<LI>[Probst], Mark, and Deinhart, Heinz (1998), "Chakotay - a preprocessor
+that can be applied to a myriad of applications" <A
+HREF="/web/20051122185426/http://www.complang.tuwien.ac.at/~schani/chpp/">
+http://www.complang.tuwien.ac.at/~schani/chpp/</A> (accessed 11/05/00)
+
+</UL>
+
+<h3>Appendix A: A small Example for using PYM</h3>
+
+<p>Suppose you want to generate a HTML page with numbered chapters and
+figures. The whole functionality can be placed into a file
+<tt>number.pym</tt> that can be included by any HTML file:</p>
+
+<blockquote>
+<pre>
+#begin python
+NUMBER_MAP = {}
+
+def NUM(tag):
+    num = NUMBER_MAP.get(tag, 0) + 1
+    NUMBER_MAP[tag] = num
+    return str(num)
+#end python
+</pre>
+</blockquote>
+
+<p>This could be used in a file <tt>page.html</tt> as follows:</p>
+
+<blockquote>
+<pre>
+#include "number.pym"
+ 
+&lt;h4&gt;&lt;[NUM("h4")]&gt; Introduction&lt;/h4&gt;
+&lt;p&gt;Figure &lt;[NUM("fig")]&gt;&lt;/p&gt;
+&lt;h4&gt;&lt;[NUM("h4")]&gt; Why do we number Chapters?&lt;/h4&gt;
+&lt;h4&gt;&lt;[NUM("h4")]&gt; Why do we number figures?&lt;/h4&gt;
+&lt;p&gt;Figure &lt;[NUM("fig")]&gt;&lt;/p&gt;
+</pre>
+</blockquote>
+
+<p>Subjecting this example to PYM by typing <tt>pym page.pym</tt> results in
+the following output:</p>
+
+<blockquote>
+<pre>
+ 
+&lt;h4&gt;1 Introduction&lt;/h4&gt;
+&lt;p&gt;Figure 1&lt;/p&gt;
+&lt;h4&gt;2 Why do we number Chapters?&lt;/h4&gt;
+&lt;h4&gt;3 Why do we number figures?&lt;/h4&gt;
+&lt;p&gt;Figure 2&lt;/p&gt;
+</pre>
+</blockquote>
+
+<h3>Appendix B: A short PYM manual</h3>
+
+<p>Pym is a command line tool invoked by:</p>
+
+<blockquote>
+<pre>
+pym <em>[options]</em><em>filename</em>
+</pre>
+</blockquote>
+
+<p>This subjects the file <tt><em>filename</em></tt> to macro expansion and
+putting the result on standard output. Although PYM does not prescribe a
+specific extension, we conventionally use <tt>.pym</tt> in order to indicate
+that a file needs to be run through PYM.</p>
+
+<p>Currently PYM only understands one option: <tt>-I <em>directory</em></tt>,
+which appends the given directory to the Python include path
+<tt>PYM_PATH</tt>. If the directory is given by a relative path, it is taken
+to be relative to the call directory of PYM. The includ option can be used
+multiple times to append multiple directories to the include path</p>
+
+<p>As a file is run through PYM, each sequence of Python code surrounded by
+the following two lines is executed:</p>
+
+<blockquote><pre>
+#begin python
+<em>python-code</em>
+#end python
+</pre></blockquote>
+
+<p>For each line in <tt><em>filename</em></tt> of the following form:</p>
+
+<blockquote><pre>
+#include <em>file-name-expression</em>
+</pre></blockquote>
+
+<p><tt><em>file-name-expression</em></tt> is evaluated as a Python
+expression. The resulting string is taken as a filename to be streamed to the
+output instead of the include line. The included file is recursively
+subjected to all rules for macro definition and macro expansion. Note that a
+filename surrounded by double quotes is a valid Python expression, and can
+thus be used to include a file:</p>
+
+<blockquote><pre>
+#include "<em>file-name</em>"
+</pre></blockquote>
+
+<p>In order to find the file specified in the include statement, the file is
+first searched locally relative to the including file. If this fails, the
+directories in the Python include path <tt>PYM_PATH</tt> are checked, one by
+one, until a match is found. Finding no matching file, is currently handled
+silently</p>
+
+<p>In order to facilitate conditional text output and conditional macro
+definition, the following syntax is supported (note that you can have any
+number of <tt>#elif</tt> blocks, including none):</p>
+
+<blockquote><pre>
+#if <em>python-expression</em>
+text block
+#elif <em>python-expression</em>
+text block
+#else
+text block
+#endif
+</pre></blockquote>
+
+<p>Each of the python-expressions is evaluated, and if the result is true, the
+following block is routed to output. If the result is false, the following
+text block is suppressed, and Python code inside the text block is not
+executed. The block following the <tt>#else</tt> block is routed to output if
+the previous block was suppressed.</p>
+
+
+<p>All other text in <tt><em>filename</em></tt> is subject to macro expansion.
+Each sequence of the form:</p>
+
+<blockquote><pre>
+&lt;[<em>python-expression</em>]&gt;
+</pre></blockquote>
+
+<p>Is replaced by the result of evaluating
+<tt><em>python-expression</em></tt> and recursively replacing such sequences
+by their expanded output. Note, that this recursive expansion is not applied
+to sequences that are shorter than the sum of the length of the two character
+sequences that start and end the expression (<tt>&lt;[</tt>, and
+<tt>]&gt;</tt>, in total 4 characters), thus it is also possible to generate
+these two sequences, if each one of them is the result of a complete
+python-expression. The recursive process is only performed on each of the
+results of a python-expression individually, the concatenated string of the
+results is left unchanged.</p>
+
+<p>Within any Python code executed, the two special strings starting and
+ending a python-expression can be set to new strings with the following
+sequence:</p>
+
+<blockquote><pre>
+PYM_EXPRESSION = ("<em>start-sequence</em>", "<em>end-sequence</em>")
+</pre></blockquote>
+
+<p>If the output should be placed in a file instead of just be printed on
+standard output, the extension of a result file can be specified in any Python
+code executed:</p>
+
+<blockquote><pre>
+PYM_EXTENSION = "<em>output-extension</em>"
+</pre></blockquote>
+
+<p>Within any Python code executed, the output for the current file can be
+terminated by the following statement:</p>
+
+<blockquote><pre>
+raise PymEndOfFile
+</pre></blockquote>
+
+<p>Within any Python code executed, the output can be completely terminated by
+the following statement:</p>
+
+<blockquote><pre>
+raise PymExit
+</pre></blockquote>
+
+<p>The search path for include files can be extended in any Python code
+executed by:</p>
+
+<blockquote><pre>
+PYM_PATH.append("<em>directory</em>")
+</pre></blockquote>
+
+<h3>Appendix C: Using PYM with an http-server</h3>
+
+<p>A nice application of PYM is the dynamic generation of html pages, based
+on PYM sources. In order to faciltate that, PYM checks for the existence of
+the environment variable <tt>DOCMENT_ROOT</tt> which is part of the standard
+http server interface. The environment variable <tt>PATH_TRANSLATED</tt> is
+used to locate the file that has been requested from the http server. The
+<tt>DOCUMENT_ROOT</tt> is also appended to the <tt>PYM_PATH</tt> so that PYM
+file inclusion starts searching files in a well defined place. By telling the
+server to filter each file with extension <tt>.pym</tt> through the PYM
+command, it is possible to implement a whole web-site based on
+pym-macros.</p>
+
+<p>As an example, in order to configure the apache web server
+(http://www.apache.org/), so that each file with extension <tt>.pym</tt> is
+filtered through the PYM command, add the following directives, in the
+respecitve places in <tt>httpd.conf</tt>:</p>
+
+<blockquote><pre>
+    DirectoryIndex index.pym index.html
+    ...
+    AddType application/x-httpd-pym .pym
+    ...
+    Action application/x-httpd-pym /cgi-bin/pym.py                                  
+</pre></blockquote>
+
+<h3>Appendix D: The source code of PYM</h3>
+
+<p>The source code to PYM 1.0 as of January 15th, 2001, is actually less than
+200 lines long. As a reference you can find all of PYM at <a
+href="/web/20051122185426/http://ray.cg.tuwien.ac.at/rft/Papers/PYM/">http://ray.cg.tuwien.ac.at/rft/Papers/PYM/</a>.</p>
+
+</BODY>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 18:54:26 Nov 22, 2005 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 17:09:03 Feb 20, 2017.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
