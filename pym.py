@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-##
-## pym 1.2, by Robert F. Tobler, 10-Mar-2002
+## pym - revised by cxw42@github - devwrench.com
+## Based on pym 1.2, by Robert F. Tobler, 10-Mar-2002
 ##
 
 import sys
@@ -31,17 +31,10 @@ ENVIRONMENT = {
     "PymExit": PymExit,
 }
 
-HTTP_HEADER = """Content-type: text/html
-
-"""
-
-HTTP_FOOTER = """
-<!-- pym timings: %g sec rendering, %g sec overall -->
-"""
-
 def pym_error(message, loc):
     print "ERROR:", message, "in '%s'.", loc[0]
     sys.exit(-1)
+# end pym_error
 
 def pym_expand(text, env, loc, out):
     (begin,end) = PYM_EXPRESSION
@@ -83,11 +76,13 @@ def pym_expand(text, env, loc, out):
             pos = stop+end_len
             start = string.find(text, begin, pos)
         out.append(text[pos:])
+# end pym_expand()
 
 def pym_read_file(filename, out):
     file = open(filename,"r")
     out.append(file.read())
     file.close()
+# end pym_read_file()
 
 def pym_expand_file(filename, env, out):
     file = open(filename,"r")
@@ -179,62 +174,54 @@ def pym_expand_file(filename, env, out):
     if tx_pos >= 0 and tx_pos < len_text:
         try: pym_expand(text[tx_pos:min(pos,len_text)], env, loc, out)
         except PymEndOfFile: pass
+# end pym_expand_file()
+
+def main():
+    file_list = []
+
+    if len(sys.argv) > 1:   # arg(s) given - parse the command line
+        file_list = []
+        incl = False        # whether the next argument is an include path
+        for arg in sys.argv[1:]:
+            if arg == '-I':
+                incl = True
+                continue
+
+            if incl:
+                if (arg[0] != '/'):
+                    arg = os.path.join(os.getcwd(), arg)
+                PYM_PATH.append(arg)
+                incl = False
+                continue
+
+            file_list.append(arg)
+        # next arg
+    #endif one argument
+
+    # Set options
+    if len(file_list) > 1:
+        print_file_banners = True
+    else:
+        print_file_banners = False
+
+    # === Main loop ===
+    for filepath in file_list:
+        env = ENVIRONMENT.copy()        # each file has its own env
+        out = []                        # list of expanded lines
+
+        try:        # Do the processing
+            pym_expand_file(filepath, env, out)
+        except PymExit:     # PymExit terminates processing of that file
+            pass            # even from deeply-nested includes.
+
+        # Print the results
+        if print_file_banners: print('=== %s ==='%filepath)
+        for text in out:
+            sys.stdout.write(text)
+    # next filepath
+# end main()
 
 if __name__ == '__main__':
-    document_root = os.environ.get("DOCUMENT_ROOT")
-    if not document_root:
-        if len(sys.argv) == 1:
-            file_list = os.listdir('.')
-        else:
-            file_list = []
-            incl = 0
-            for arg in sys.argv[1:]:
-                if arg == '-I':
-                    incl = 1
-                    continue
-                if incl:
-                    if (arg[0] != '/'):
-                        arg = os.path.join(os.getcwd(), arg)
-                    PYM_PATH.append(arg)
-                    incl = 0
-                    continue
-                file_list.append(arg)
-        if len(file_list) > 1:
-            talk = 1
-        else:
-            talk = 0
-        for filepath in file_list:
-            if len(filepath) > 4 and filepath[-4:] == '.pym':
-                env = ENVIRONMENT.copy()
-                out = []
-                try:
-                    pym_expand_file(filepath, env, out)
-                except PymExit: pass
-                extension = env.get("PYM_EXTENSION","")
-                if extension:
-                    file = open(filepath[:-4] + extension, "w")
-                    for text in out: file.write(text)
-                    file.close()
-                    if talk: print filepath
-                else:
-                    for text in out: sys.stdout.write(text)
-    else:
-        env = ENVIRONMENT.copy()
-        PYM_PATH.append(document_root)
-        path_translated = os.environ.get("PATH_TRANSLATED")
-        sys.stdout.write(HTTP_HEADER)
-        out = []
-        try:
-            pym_expand_file(path_translated, env, out)
-        except PymExit:
-            pass
-        for text in out: sys.stdout.write(text)
-        if env.get("PYM_ARG_MAP",{}).get("debug","") == "timing":
-            overall = time.clock()
-            rendering = overall - start_time
-            sys.stdout.write(HTTP_FOOTER % (rendering, overall))
-##
-## end of PYM source
-##
+    main()
 
 # vi: set ts=4 sts=4 sw=4 et ai ff=unix: #
