@@ -36,11 +36,15 @@ def pym_error(message, loc):
     sys.exit(-1)
 # end pym_error
 
-def pym_expand(text, env, loc, out):
+def pym_expand_expressions(text, env, loc, out):
+    """ Expand inline expressions in _text_ in environment _env_.
+        Append the result to list _out_. """
+
     (begin,end) = PYM_EXPRESSION
     prefix_map = PYM_PREFIX_MAP
     begin_len = len(begin)
     end_len = len(end)
+
     if len(text) <= begin_len + end_len:
         out.append(text)
     else:
@@ -72,22 +76,30 @@ def pym_expand(text, env, loc, out):
                 error.lineno = error.lineno + loc[1] + \
                                len(string.split(text[0:start],'\n'))
                 raise
-            pym_expand(str(value), env, loc, out)
+            pym_expand_expressions(str(value), env, loc, out)
             pos = stop+end_len
             start = string.find(text, begin, pos)
         out.append(text[pos:])
-# end pym_expand()
+# end pym_expand_expressions()
 
-def pym_read_file(filename, out):
+def pym_dump_file_contents(filename, out):
+    """ Append the contents of _filename_ to list _out_. """
     file = open(filename,"r")
     out.append(file.read())
     file.close()
-# end pym_read_file()
+# end pym_dump_file_contents()
 
 def pym_expand_file(filename, env, out):
-    file = open(filename,"r")
-    text = file.read()
-    file.close()
+    """ Process the contents of _filename_ in environment _env_.
+        Append the result to list _out_. """
+    fd = open(filename,"r")
+    text = fd.read()
+    fd.close()
+    pym_expand_string(text, env, out)
+
+def pym_expand_string(text, env, out):
+    """ Process the (possibly multi-line) string _text_ in environment _env_.
+        Append the result to list _out_. """
     lnum = 1
     py_pos = -1
     tx_pos = 0
@@ -99,6 +111,7 @@ def pym_expand_file(filename, env, out):
     if len(lines[0]) > 2 and lines[0][:2] == "#!":
         lines = lines[1:]
         lnum = 2
+
     for line in lines:
         end = pos + len(line) + 1
         if line and line[0] == '#':
@@ -106,7 +119,8 @@ def pym_expand_file(filename, env, out):
                 tx_start = tx_pos ; tx_pos = -1
                 try:
                     if cond:
-                        pym_expand(text[tx_start:pos], env, loc, out)
+                        pym_expand_expressions(text[tx_start:pos],
+                                                env, loc, out)
                 except PymEndOfFile: break
             if string.find(line,"end python") > 0:
                 if py_pos < 0: pym_error("superfluous end python", loc)
@@ -146,7 +160,7 @@ def pym_expand_file(filename, env, out):
                     if namestart == 8:
                         pym_expand_file(includefilename, env, out)
                     else:
-                        pym_read_file(includefilename, out)
+                        pym_dump_file_contents(includefilename, out)
                 tx_pos = end
                 loc = (filename, lnum)
             elif string.find(line, "if") == 1:
@@ -168,12 +182,15 @@ def pym_expand_file(filename, env, out):
                 loc = (filename, lnum)
         pos = end
         lnum = lnum + 1
+    # next line
 
     if py_pos >= 0: pym_error("unterminated python code", loc)
     len_text = len(text)
     if tx_pos >= 0 and tx_pos < len_text:
-        try: pym_expand(text[tx_pos:min(pos,len_text)], env, loc, out)
-        except PymEndOfFile: pass
+        try:
+            pym_expand_expressions(text[tx_pos:min(pos,len_text)], env, loc, out)
+        except PymEndOfFile:
+            pass
 # end pym_expand_file()
 
 def main():
