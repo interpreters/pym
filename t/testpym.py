@@ -13,9 +13,18 @@ from unittest import TestCase
 
 class Basic(TestCase):
     """Basic tests"""
-    def test(self):
-        """Placeholder"""
-        self.assertEqual(True,False)     # placeholder
+    def setUp(self):
+        self.expressions=(  # for test_expressions
+            ('<[2+2]>','4'),
+            ("foo\n<['yes']>", "foo\nyes"),
+        );
+
+    def test_expressions(self):
+        """ Expressions """
+        for test in self.expressions:
+            res = pym.pym_process_text(test[0])
+            self.assertEqual(res, test[1])
+    # end test_expressions()
 
 if __name__ == '__main__':
     unittest.main()

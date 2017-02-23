@@ -14,6 +14,7 @@ class PymException(Exception): pass
 class PymEndOfFile(PymException): pass
 class PymExit(PymException): pass
 
+# Default values of system variables
 PYM_PATH = []
 PYM_PREFIX_MAP = { '/': ("/","END_") }  # This translates a prefix so that
                                         # special macro names can be used:
@@ -22,6 +23,7 @@ PYM_PREFIX_MAP = { '/': ("/","END_") }  # This translates a prefix so that
                                         # their 1st character (key in map).
 PYM_EXPRESSION = ["<[","]>"]
 
+# The default environment
 ENVIRONMENT = {
     "PYM_EXPRESSION": PYM_EXPRESSION,
     "PYM_PREFIX_MAP": PYM_PREFIX_MAP,
@@ -40,7 +42,7 @@ def pym_expand_expressions(text, env, loc, out):
     """ Expand inline expressions in _text_ in environment _env_.
         Append the result to list _out_. """
 
-    (begin,end) = PYM_EXPRESSION
+    (begin,end) = PYM_EXPRESSION    # TODO get PYM_* from _env_ instead
     prefix_map = PYM_PREFIX_MAP
     begin_len = len(begin)
     end_len = len(end)
@@ -199,7 +201,26 @@ def pym_expand_string(filename, text, env, out):
             pass
 # end pym_expand_string()
 
-def main():
+def pym_process_text(text, **env_overrides):
+    """ Preprocesses the complete file _text_ and returns the resulting string.
+        If _env_overrides_ is provided, applies it to the environment
+        before processing. """
+
+    env = ENVIRONMENT.copy()        # each file has its own env
+    env.update(env_overrides)
+    out = []                        # list of expanded lines
+
+    try:        # Do the processing
+        pym_expand_string('', text, env, out)
+    except PymExit:     # PymExit terminates processing of the string.
+        pass
+
+    return ''.join(out)
+        # Newlines are expressly included in _out_, so we join on ''
+        # instead of "\n".
+# end pym_process_text()
+
+def pym_command_line_main():
     file_list = []
 
     if len(sys.argv) > 1:   # arg(s) given - parse the command line
@@ -245,9 +266,9 @@ def main():
         for text in out:
             sys.stdout.write(text)
     # next filepath
-# end main()
+# end pym_command_line_main()
 
 if __name__ == '__main__':
-    main()
+    pym_command_line_main()
 
 # vi: set ts=4 sts=4 sw=4 et ai ff=unix: #
