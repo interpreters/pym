@@ -91,13 +91,19 @@ def pym_dump_file_contents(filename, out):
 
 def pym_expand_file(filename, env, out):
     """ Process the contents of _filename_ in environment _env_.
-        Append the result to list _out_. """
-    fd = open(filename,"r")
-    text = fd.read()
-    fd.close()
-    pym_expand_string(text, env, out)
+        Append the result to list _out_.
+        A filename of '' means use standard input. """
+    if filename=="":    fd = sys.stdin
+    else:               fd = open(filename,"r")
 
-def pym_expand_string(text, env, out):
+    text = fd.read()
+
+    if filename != "": fd.close()
+
+    pym_expand_string(filename, text, env, out)
+# end pym_expand_file()
+
+def pym_expand_string(filename, text, env, out):
     """ Process the (possibly multi-line) string _text_ in environment _env_.
         Append the result to list _out_. """
     lnum = 1
@@ -191,7 +197,7 @@ def pym_expand_string(text, env, out):
             pym_expand_expressions(text[tx_pos:min(pos,len_text)], env, loc, out)
         except PymEndOfFile:
             pass
-# end pym_expand_file()
+# end pym_expand_string()
 
 def main():
     file_list = []
@@ -220,6 +226,9 @@ def main():
         print_file_banners = True
     else:
         print_file_banners = False
+
+    if len(file_list) == 0:
+        file_list = [""]      # stdin
 
     # === Main loop ===
     for filepath in file_list:
