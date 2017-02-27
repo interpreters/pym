@@ -114,7 +114,6 @@ def pym_expand_string(filename, text, env, out):
     loc = (filename, 0)
     pos = 0
     cond = True
-        # TODO FIXME only use text for which the whole condstack is True
     condstack = []
     lines = string.split(text, '\n')
     if len(lines[0]) > 2 and lines[0][:2] == "#!":
@@ -124,17 +123,18 @@ def pym_expand_string(filename, text, env, out):
     for line in lines:
         end = pos + len(line) + 1
         if line and line[0] == '#':     # a command
-            if tx_pos >= 0:
+            if tx_pos >= 0:         # first, expand any text we've seen so far
                 tx_start = tx_pos ; tx_pos = -1
                 try:
-                    if cond:    # expand text we've seen so far
+                    if cond and all(condstack):
                         pym_expand_expressions(text[tx_start:pos],
                                                 env, loc, out)
                 except PymEndOfFile: break
             if string.find(line,"end python") > 0:
                 if py_pos < 0: pym_error("superfluous end python", loc)
-                if cond:    # Run the Python code unless it is
-                    try:    # excluded by an #if test
+                if cond and all(condstack):
+                    # Run the Python code unless it is excluded by an #if test
+                    try:
                         exec text[py_pos:pos] in env, env
                     except PymExit: raise
                     except PymEndOfFile:
@@ -158,7 +158,7 @@ def pym_expand_string(filename, text, env, out):
                 namestart = 8
                 if string.find(line, "include_direct") == 1:
                     namestart = 15
-                if cond:
+                if cond and all(condstack):
                     dir = os.path.dirname(filename)
                     include = eval(string.strip(line[namestart:]), env, env)
                     includefilename = os.path.join(dir,include)
