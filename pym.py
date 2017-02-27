@@ -110,10 +110,11 @@ def pym_expand_string(filename, text, env, out):
         Append the result to list _out_. """
     lnum = 1
     py_pos = -1
-    tx_pos = 0
+    tx_pos = 0      # start of normal text
     loc = (filename, 0)
     pos = 0
-    cond = 1
+    cond = True
+        # TODO FIXME only use text for which the whole condstack is True
     condstack = []
     lines = string.split(text, '\n')
     if len(lines[0]) > 2 and lines[0][:2] == "#!":
@@ -122,18 +123,18 @@ def pym_expand_string(filename, text, env, out):
 
     for line in lines:
         end = pos + len(line) + 1
-        if line and line[0] == '#':
+        if line and line[0] == '#':     # a command
             if tx_pos >= 0:
                 tx_start = tx_pos ; tx_pos = -1
                 try:
-                    if cond:
+                    if cond:    # expand text we've seen so far
                         pym_expand_expressions(text[tx_start:pos],
                                                 env, loc, out)
                 except PymEndOfFile: break
             if string.find(line,"end python") > 0:
                 if py_pos < 0: pym_error("superfluous end python", loc)
-                if cond:
-                    try:
+                if cond:    # Run the Python code unless it is
+                    try:    # excluded by an #if test
                         exec text[py_pos:pos] in env, env
                     except PymExit: raise
                     except PymEndOfFile:
@@ -173,11 +174,11 @@ def pym_expand_string(filename, text, env, out):
                 loc = (filename, lnum)
             elif string.find(line, "if") == 1:
                 condstack.append(cond)
-                cond = eval(string.strip(line[3:]), env, env)
+                cond = bool(eval(string.strip(line[3:]), env, env))
                 tx_pos = end
                 loc = (filename, lnum)
             elif string.find(line, "elif") == 1:
-                cond = eval(string.strip(line[5:]), env, env)
+                cond = bool(eval(string.strip(line[5:]), env, env))
                 tx_pos = end
                 loc = (filename, lnum)
             elif string.find(line, "else") == 1:

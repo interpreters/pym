@@ -2,6 +2,7 @@
 # Copyright (c) 2017 cxw42
 
 import sys
+import pdb
 
 # Get pym
 sys.path.insert(0, '.')     # if cwd is pym/
@@ -153,6 +154,7 @@ foo='1F2F'
         self.chk(self.msg_2_levels, "True\nTrue\n1T2T", inp1=True, inp2=True)
 
     def test_assignment_TF(self):
+        #pdb.set_trace()
         self.chk(self.msg_2_levels, "True\nFalse\n1T2F", inp1=True, inp2=False)
 
     def test_assignment_FT(self):
