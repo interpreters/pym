@@ -1,7 +1,7 @@
 # testpym.py: test pym
 # Copyright (c) 2017 cxw42
 
-import sys
+import os, sys
 import pdb
 
 # Get pym
@@ -19,10 +19,12 @@ class TestCaseChk(TestCase):
         res = pym.pym_process_text(text, **env_overrides)
         self.assertEqual(res, aim)
 
+######################################################################
 class Basic(TestCaseChk):
     """Basic tests"""
 
     def test_2plus2(self): self.chk('<[2+2]>','4')
+
     def test_LiteralPlusExp(self): self.chk("foo\n<['yes']>", "foo\nyes")
 
     def test_IfTrueCond(self): self.chk("""#begin python
@@ -66,6 +68,7 @@ line2
 
 #end Basic(TestCaseChk)
 
+######################################################################
 class PymExceptionTest(TestCaseChk):
     """ Tests involving throwing Pym* exceptions """
 
@@ -103,6 +106,7 @@ this shouldn't print""", "bar2\n")
 
 #end PymExceptionTest(TestCaseChk)
 
+######################################################################
 class PymCondPythonTest(TestCaseChk):
     """ Tests involving Python blocks guarded by conditionals """
 
@@ -163,6 +167,22 @@ foo='1F2F'
     def test_assignment_FF(self):
         self.chk(self.msg_2_levels, "False\nFalse\n1F2F", inp1=False, inp2=False)
 
+######################################################################
+class IncludeTest(TestCaseChk):
+    """ Tests of #includes """
+
+    def setUp(self):
+        self.mypath = os.path.dirname(__file__)     # where this file is
+
+    def p(self, fn):
+        """ Make the path to _fn_ in the same directory as this file """
+        return "'" + os.path.join(self.mypath, fn).replace("'", "\\'") + "'"
+
+    def test_basic(self): self.chk('#include ' + self.p('plain.txt'),
+                                    "Line 1\nLine 2\n")
+
+    def test_expr(self): self.chk('#include '+self.p('expr.txt'),
+                                    "42\n", foo=42)
 
 #####################################################################
 if __name__ == '__main__':

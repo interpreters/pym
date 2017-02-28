@@ -122,7 +122,9 @@ def pym_expand_string(filename, text, env, out):
 
     for line in lines:
         end = pos + len(line) + 1
+
         if line and line[0] == '#':     # a command
+
             if tx_pos >= 0:         # first, expand any text we've seen so far
                 tx_start = tx_pos ; tx_pos = -1
                 try:
@@ -130,12 +132,17 @@ def pym_expand_string(filename, text, env, out):
                         pym_expand_expressions(text[tx_start:pos],
                                                 env, loc, out)
                 except PymEndOfFile: break
+
+            # Now process the command
             if string.find(line,"end python") > 0:
                 if py_pos < 0: pym_error("superfluous end python", loc)
                 if cond and all(condstack):
                     # Run the Python code unless it is excluded by an #if test
                     try:
                         exec text[py_pos:pos] in env, env
+                        # TODO? in the future, maybe capture output from
+                        # this block and add it to out[]?
+                        # Presently, the _exec_ block cannot add lines to out.
                     except PymExit: raise
                     except PymEndOfFile:
                         py_pos = -1
@@ -151,9 +158,11 @@ def pym_expand_string(filename, text, env, out):
                         raise
                 py_pos = -1
                 tx_pos = end
+
             elif string.find(line, "begin python") > 0:
                 py_pos = end
                 loc = (filename, lnum)
+
             elif string.find(line, "include") == 1:
                 namestart = 8
                 if string.find(line, "include_direct") == 1:
@@ -172,23 +181,29 @@ def pym_expand_string(filename, text, env, out):
                         pym_dump_file_contents(includefilename, out)
                 tx_pos = end
                 loc = (filename, lnum)
+
             elif string.find(line, "if") == 1:
                 condstack.append(cond)
                 cond = bool(eval(string.strip(line[3:]), env, env))
                 tx_pos = end
                 loc = (filename, lnum)
+
             elif string.find(line, "elif") == 1:
                 cond = bool(eval(string.strip(line[5:]), env, env))
                 tx_pos = end
                 loc = (filename, lnum)
+
             elif string.find(line, "else") == 1:
                 cond = not cond
                 tx_pos = end
                 loc = (filename, lnum)
+
             elif string.find(line, "endif") == 1:
                 cond = condstack.pop()
                 tx_pos = end
                 loc = (filename, lnum)
+        #endif the line was a command
+
         pos = end
         lnum = lnum + 1
     # next line
