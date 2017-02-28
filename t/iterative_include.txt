@@ -1,0 +1,9 @@
+#begin python
+count = count - 1
+#end python
+#if count==0
+zero
+#else
+<[count]>
+#include "iterative_include.txt"
+#endif

@@ -33,10 +33,11 @@ ENVIRONMENT = {
     "PymExit": PymExit,
 }
 
-def pym_error(message, loc):
+def pym_die(message, loc):
+    """ Report errors to the console, then exit """
     print "ERROR:", message, "in '%s'.", loc[0]
     sys.exit(-1)
-# end pym_error
+# end pym_die
 
 def pym_expand_expressions(text, env, loc, out):
     """ Expand inline expressions in _text_ in environment _env_.
@@ -52,9 +53,10 @@ def pym_expand_expressions(text, env, loc, out):
     else:
         pos = 0
         start = string.find(text, begin, pos)
+
         while (start >= 0):
             stop = string.find(text, end, start+begin_len)
-            if stop < 0: pym_error("unterminated python macro", loc)
+            if stop < 0: pym_die("unterminated python macro", loc)
             out.append(text[pos:start])
             exp = string.strip(text[start+begin_len:stop])
             prefix = prefix_map.get(exp[0])
@@ -64,7 +66,7 @@ def pym_expand_expressions(text, env, loc, out):
                     if len(exp) >= len_pr and exp[:len_pr] == prefix[0]:
                         value = eval(prefix[1]+exp[len_pr:], env, env)
                     else:
-                        pym_error("illegal prefix '%s'" % exp[:len_pr], loc)
+                        pym_die("illegal prefix '%s'" % exp[:len_pr], loc)
                 else:
                     value = eval(exp, env, env)
             except PymException: raise
@@ -81,6 +83,8 @@ def pym_expand_expressions(text, env, loc, out):
             pym_expand_expressions(str(value), env, loc, out)
             pos = stop+end_len
             start = string.find(text, begin, pos)
+        #end while
+
         out.append(text[pos:])
 # end pym_expand_expressions()
 
@@ -100,7 +104,7 @@ def pym_expand_file(filename, env, out):
 
     text = fd.read()
 
-    if filename != "": fd.close()
+    if filename != "": fd.close()   # don't close stdin
 
     pym_expand_string(filename, text, env, out)
 # end pym_expand_file()
@@ -135,7 +139,8 @@ def pym_expand_string(filename, text, env, out):
 
             # Now process the command
             if string.find(line,"end python") > 0:
-                if py_pos < 0: pym_error("superfluous end python", loc)
+                if py_pos < 0: pym_die("superfluous end python", loc)
+
                 if cond and all(condstack):
                     # Run the Python code unless it is excluded by an #if test
                     try:
@@ -167,18 +172,26 @@ def pym_expand_string(filename, text, env, out):
                 namestart = 8
                 if string.find(line, "include_direct") == 1:
                     namestart = 15
+
                 if cond and all(condstack):
-                    dir = os.path.dirname(filename)
+                    dir_name = os.path.dirname(filename)
+                        # First, try relative to the file we are currently
+                        # processing (_filename_)
                     include = eval(string.strip(line[namestart:]), env, env)
-                    includefilename = os.path.join(dir,include)
+                    includefilename = os.path.join(dir_name,include)
+
                     if not os.path.isfile(includefilename):
-                        for dir in PYM_PATH:
-                            includefilename = os.path.join(dir, include)
+                        for dir_name in PYM_PATH:
+                            includefilename = os.path.join(dir_name, include)
                             if os.path.isfile(includefilename): break
-                    if namestart == 8:
+                        # TODO? Fail if the file could not be found?
+
+                    if namestart == 8:  # #include
                         pym_expand_file(includefilename, env, out)
-                    else:
+                    else:               # #include_direct
                         pym_dump_file_contents(includefilename, out)
+                #endif conditions are true
+
                 tx_pos = end
                 loc = (filename, lnum)
 
@@ -190,6 +203,7 @@ def pym_expand_string(filename, text, env, out):
 
             elif string.find(line, "elif") == 1:
                 cond = bool(eval(string.strip(line[5:]), env, env))
+                    # TODO don't test the condition if it already succeeded
                 tx_pos = end
                 loc = (filename, lnum)
 
@@ -208,7 +222,7 @@ def pym_expand_string(filename, text, env, out):
         lnum = lnum + 1
     # next line
 
-    if py_pos >= 0: pym_error("unterminated python code", loc)
+    if py_pos >= 0: pym_die("unterminated python code", loc)
     len_text = len(text)
     if tx_pos >= 0 and tx_pos < len_text:
         try:

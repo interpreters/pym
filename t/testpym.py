@@ -27,7 +27,8 @@ class Basic(TestCaseChk):
 
     def test_LiteralPlusExp(self): self.chk("foo\n<['yes']>", "foo\nyes")
 
-    def test_IfTrueCond(self): self.chk("""#begin python
+    def test_IfTrueCond(self): self.chk(
+"""#begin python
 foo=42
 #end python
 #if foo==42
@@ -36,7 +37,8 @@ yes
 no
 #fi""", "yes\n")
 
-    def test_IfFalseCond(self): self.chk("""#begin python
+    def test_IfFalseCond(self): self.chk(
+"""#begin python
 foo=41
 #end python
 #if foo==42
@@ -45,7 +47,8 @@ yes
 no
 #fi""", "no\n")
 
-    def test_ElifCond(self): self.chk("""#begin python
+    def test_ElifCond(self): self.chk(
+"""#begin python
 foo=41
 #end python
 #if foo==42
@@ -56,12 +59,14 @@ not forty-two
 no
 #fi""", "not forty-two\n")
 
-    def test_MultilineTrue(self): self.chk("""#if True
+    def test_MultilineTrue(self): self.chk(
+"""#if True
 line1
 line2
 #endif""", "line1\nline2\n")
 
-    def test_MultilineFalse(self): self.chk("""#if False
+    def test_MultilineFalse(self): self.chk(
+"""#if False
 line1
 line2
 #endif""", "")
@@ -72,31 +77,37 @@ line2
 class PymExceptionTest(TestCaseChk):
     """ Tests involving throwing Pym* exceptions """
 
-    def test_EOF(self): self.chk("""#begin python
+    def test_EOF(self): self.chk(
+"""#begin python
 raise PymEndOfFile
 #end python""", '')
 
-    def test_Exit(self): self.chk("""#begin python
+    def test_Exit(self): self.chk(
+"""#begin python
 raise PymExit
 #end python""", '')
 
-    def test_EOF_textbefore(self): self.chk("""foo
+    def test_EOF_textbefore(self): self.chk(
+"""foo
 #begin python
 raise PymEndOfFile
 #end python""", "foo\n")
 
-    def test_Exit_textbefore(self): self.chk("""bar
+    def test_Exit_textbefore(self): self.chk(
+"""bar
 #begin python
 raise PymExit
 #end python""", "bar\n")
 
-    def test_EOF_textafter(self): self.chk("""foo2
+    def test_EOF_textafter(self): self.chk(
+"""foo2
 #begin python
 raise PymEndOfFile
 #end python
 this shouldn't print""", "foo2\n")
 
-    def test_Exit_textafter(self): self.chk("""bar2
+    def test_Exit_textafter(self): self.chk(
+"""bar2
 #begin python
 raise PymExit
 #end python
@@ -183,6 +194,73 @@ class IncludeTest(TestCaseChk):
 
     def test_expr(self): self.chk('#include '+self.p('expr.txt'),
                                     "42\n", foo=42)
+
+    def test_block_and_expr(self):
+        """ Modifying a value used in an #include before the #include """
+        self.chk(
+"""#begin python
+foo = foo * 2
+#end python
+#include """+self.p('expr.txt'),
+            "84\n",
+            foo=42)
+
+    def test_pyblock(self):
+        """ pyblock sets a variable, which should be accessible outside
+            since all includes are processed in the same environment. """
+        self.chk("#include "+self.p('pyblock.txt')+
+            "\n<[foo]>", "Inner message")
+
+    def test_include_direct_expr(self):
+        """ #include_direct of a file containing an expression -
+            doesn't evaluate the expression. """
+        self.chk('#include_direct '+self.p('expr.txt'), "<[foo]>\n")
+
+    def test_include_direct_block(self):
+        """ #include_direct of a file containing a Python block -
+            doesn't evaluate the block. """
+        self.chk('#include_direct '+self.p('pyblock.txt'),
+"""#begin python
+foo="Inner message"
+#end python
+""")
+
+    def test_iterative_include(self):
+        """ iterative_include.txt includes itself multiple times
+            based on _count_.  The first output is one less than the
+            initial _count_ because iterative_include.txt decrements first. """
+        self.chk('#include '+self.p('iterative_include.txt'),
+                "3\n2\n1\nzero\n",
+                count = 4)
+
+    def test_iterative_include_lots(self):
+        """ iterative_include.txt, but more times
+            based on _count_. """
+        self.chk('#include '+self.p('iterative_include.txt'),
+                "9\n8\n7\n6\n5\n4\n3\n2\n1\nzero\n",
+                count=10)
+
+######################################################################
+class ElifTest(TestCaseChk):
+    """ Tests of #elif """
+
+    def setUp(self): self.foo_bar = (
+"""#if foo
+Foo
+#elif bar
+Bar
+#else
+Bat
+#endif""")
+
+    def test_foo_bar__foo(self): self.chk(self.foo_bar, "Foo\n",
+            foo=True, bar=True)
+
+    def test_foo_bar__bar(self): self.chk(self.foo_bar, "Bar\n",
+            foo=False, bar=True)
+
+    def test_foo_bar__bat(self): self.chk(self.foo_bar, "Bat\n",
+            foo=False, bar=False)
 
 #####################################################################
 if __name__ == '__main__':

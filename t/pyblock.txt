@@ -1,0 +1,3 @@
+#begin python
+foo="Inner message"
+#end python
