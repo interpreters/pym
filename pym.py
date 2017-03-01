@@ -117,14 +117,22 @@ def pym_expand_string(filename, text, env, out):
     tx_pos = 0      # start of normal text
     loc = (filename, 0)
     pos = 0
+
+    # Whether the current block is being evaluated, based on #if
     cond = True
     condstack = []
+
+    # Whether we have already seen a True result in the current #if..elif..
+    succeeded = False
+    succeeded_stack = []
+
+    # Process input
     lines = string.split(text, '\n')
     if len(lines[0]) > 2 and lines[0][:2] == "#!":
         lines = lines[1:]
         lnum = 2
 
-    for line in lines:
+    for line in lines:      # main loop
         end = pos + len(line) + 1
 
         if line and line[0] == '#':     # a command
@@ -196,24 +204,37 @@ def pym_expand_string(filename, text, env, out):
                 loc = (filename, lnum)
 
             elif string.find(line, "if") == 1:
+
                 condstack.append(cond)
                 cond = bool(eval(string.strip(line[3:]), env, env))
+
+                succeeded_stack.append(succeeded)
+                succeeded = cond    # whether this #if succeeded
+
                 tx_pos = end
                 loc = (filename, lnum)
 
+            # TODO die on #elif, #else, or #endif without a preceding #if
             elif string.find(line, "elif") == 1:
-                cond = bool(eval(string.strip(line[5:]), env, env))
-                    # TODO don't test the condition if it already succeeded
+                if succeeded:   # Don't run this if an earlier clause won
+                    cond = False
+                else:
+                    cond = bool(eval(string.strip(line[5:]), env, env))
+                    succeeded = cond
+
                 tx_pos = end
                 loc = (filename, lnum)
 
             elif string.find(line, "else") == 1:
-                cond = not cond
+                cond = not succeeded    # true if nothing else matched
+                succeeded = True
                 tx_pos = end
                 loc = (filename, lnum)
 
             elif string.find(line, "endif") == 1:
                 cond = condstack.pop()
+                succeeded = succeeded_stack.pop()
+
                 tx_pos = end
                 loc = (filename, lnum)
         #endif the line was a command
