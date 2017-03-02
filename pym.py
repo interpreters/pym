@@ -109,7 +109,7 @@ def pym_expand_file(filename, env, out):
     pym_expand_string(filename, text, env, out)
 # end pym_expand_file()
 
-def pym_expand_string(filename, text, env, out):
+def pym_expand_string(filename, text, env, out, command_char='#'):
     """ Process the (possibly multi-line) string _text_ in environment _env_.
         Append the result to list _out_. """
     lnum = 1
@@ -128,14 +128,16 @@ def pym_expand_string(filename, text, env, out):
 
     # Process input
     lines = string.split(text, '\n')
-    if len(lines[0]) > 2 and lines[0][:2] == "#!":
+
+    # Skip shebang, if any
+    if len(lines[0]) > 2 and lines[0][:2] == '#!':
         lines = lines[1:]
         lnum = 2
 
     for line in lines:      # main loop
         end = pos + len(line) + 1
 
-        if line and line[0] == '#':     # a command
+        if line and line[0] == command_char:        # a command
 
             if tx_pos >= 0:         # first, expand any text we've seen so far
                 tx_start = tx_pos ; tx_pos = -1
