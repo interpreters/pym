@@ -1,0 +1,3 @@
+indirect before eof
+#include "eof.txt"
+indirect after eof

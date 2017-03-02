@@ -15,6 +15,13 @@ from unittest import TestCase
 class TestCaseChk(TestCase):
     """ Parent class defining utility functins """
 
+    def setUp(self):
+        self.mypath = os.path.dirname(__file__)     # where this file is
+
+    def p(self, fn):
+        """ Make the path to _fn_ in the same directory as this file """
+        return "'" + os.path.join(self.mypath, fn).replace("'", "\\'") + "'"
+
     def chk(self, text, aim, **env_overrides):
         res = pym.pym_process_text(text, **env_overrides)
         self.assertEqual(res, aim)
@@ -113,7 +120,26 @@ raise PymExit
 #end python
 this shouldn't print""", "bar2\n")
 
-    # TODO add tests throwing from included files
+    # tests of throwing from included files
+
+    def test_included_EOF(self): self.chk(
+        '#include '+self.p('eof.txt'), "before eof\n")
+
+    def test_included_Exit(self): self.chk(
+        '#include '+self.p('exit.txt'), "before exit\n")
+
+    def test_included_EOF_indirect(self): self.chk(
+        '#include '+self.p('eof-indirect.txt'),
+"""indirect before eof
+before eof
+indirect after eof
+""")
+
+    def test_included_Exit_indirect(self): self.chk(
+        '#include '+self.p('exit-indirect.txt'),
+"""indirect before exit
+before exit
+""")    # "indirect after exit" doesn't get printed
 
 #end PymExceptionTest(TestCaseChk)
 
@@ -182,13 +208,6 @@ foo='1F2F'
 class IncludeTest(TestCaseChk):
     """ Tests of #includes """
 
-    def setUp(self):
-        self.mypath = os.path.dirname(__file__)     # where this file is
-
-    def p(self, fn):
-        """ Make the path to _fn_ in the same directory as this file """
-        return "'" + os.path.join(self.mypath, fn).replace("'", "\\'") + "'"
-
     def test_basic(self): self.chk('#include ' + self.p('plain.txt'),
                                     "Line 1\nLine 2\n")
 
@@ -244,7 +263,8 @@ foo="Inner message"
 class ElifTest(TestCaseChk):
     """ Tests of #elif """
 
-    def setUp(self): self.foo_bar = (
+    def setUp(self):
+        self.foo_bar = (
 """#if foo
 Foo
 #elif bar
@@ -252,6 +272,34 @@ Bar
 #else
 Bat
 #endif""")
+
+        self.exprs=(
+"""#if foo
+<[14]>
+#elif bar
+<[28]>
+#else
+<[42]>
+#endif""")
+
+        self.blocks=(
+"""#if foo
+#begin python
+def x(): return "Hello"
+#end python
+#elif bar
+#begin python
+def x(): return "World"
+#end python
+#else
+#begin python
+def x(): return "Spam"
+#end python
+#endif
+<[x()]>""")     # also tests lack of a trailing newline
+
+   #setUp()
+
 
     def test_foo_bar__foo(self): self.chk(self.foo_bar, "Foo\n",
             foo=True, bar=True)
@@ -261,6 +309,32 @@ Bat
 
     def test_foo_bar__bat(self): self.chk(self.foo_bar, "Bat\n",
             foo=False, bar=False)
+
+    # exprs
+    def test_exprs__foo(self): self.chk(self.exprs, "14\n",
+            foo=True, bar=True)
+
+    def test_exprs__bar(self): self.chk(self.exprs, "28\n",
+            foo=False, bar=True)
+
+    def test_exprs__bat(self): self.chk(self.exprs, "42\n",
+            foo=False, bar=False)
+
+    # blocks
+    def test_blocks__foo(self): self.chk(self.blocks, "Hello",
+            foo=True, bar=True)
+
+    def test_blocks__bar(self): self.chk(self.blocks, "World",
+            foo=False, bar=True)
+
+    def test_blocks__bat(self): self.chk(self.blocks, "Spam",
+            foo=False, bar=False)
+
+#####################################################################
+
+# TODO add tests of error conditions: nested #begin python blocks; missing
+# #end python; #elif or #endif before #if; #endif before #if; misspelled
+# command names (e.g., #elsif); commands without required arguments.
 
 #####################################################################
 if __name__ == '__main__':

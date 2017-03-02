@@ -1,0 +1,3 @@
+indirect before exit
+#include "exit.txt"
+indirect after exit

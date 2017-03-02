@@ -1,0 +1,5 @@
+before eof
+#begin python
+raise PymEndOfFile
+#end python
+after eof
