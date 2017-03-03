@@ -26,6 +26,16 @@ class TestCaseChk(TestCase):
         res = pym.pym_process_text(text, **env_overrides)
         self.assertEqual(res, aim)
 
+    def chkRaises(self, text, errmsg_regex, **env_overrides):
+        def inner(text, env_overrides):
+            return pym.pym_process_text(text, **env_overrides)
+
+        self.assertRaisesRegexp(
+                pym.PymProcessingError, errmsg_regex, inner,
+                text, env_overrides     # args to _inner_
+        )
+    # end chkRaises()
+
 ######################################################################
 class Basic(TestCaseChk):
     """Basic tests"""
@@ -81,8 +91,9 @@ line2
 #end Basic(TestCaseChk)
 
 ######################################################################
-class PymExceptionTest(TestCaseChk):
-    """ Tests involving throwing Pym* exceptions """
+class PymExceptionFromInput(TestCaseChk):
+    """ Tests involving throwing PymEndOfFile and PymExit exceptions
+        from input files. """
 
     def test_EOF(self): self.chk(
 """#begin python
@@ -144,7 +155,7 @@ before exit
 #end PymExceptionTest(TestCaseChk)
 
 ######################################################################
-class PymCondPythonTest(TestCaseChk):
+class PymCondPython(TestCaseChk):
     """ Tests involving Python blocks guarded by conditionals """
 
     def setUp(self):
@@ -205,7 +216,7 @@ foo='1F2F'
         self.chk(self.msg_2_levels, "False\nFalse\n1F2F", inp1=False, inp2=False)
 
 ######################################################################
-class IncludeTest(TestCaseChk):
+class Include(TestCaseChk):
     """ Tests of #includes """
 
     def test_basic(self): self.chk('#include ' + self.p('plain.txt'),
@@ -260,7 +271,7 @@ foo="Inner message"
                 count=10)
 
 ######################################################################
-class ElifTest(TestCaseChk):
+class Elif(TestCaseChk):
     """ Tests of #elif """
 
     def setUp(self):
@@ -335,6 +346,15 @@ def x(): return "Spam"
 # TODO add tests of error conditions: nested #begin python blocks; missing
 # #end python; #elif or #endif before #if; #endif before #if; misspelled
 # command names (e.g., #elsif); commands without required arguments.
+
+class BadParse(TestCaseChk):
+    """ Tests of input that cannot be parsed. """
+
+    def test_unterminated_python_block(self):
+        self.chkRaises('#begin python','unterminated python code')
+
+    def test_end_python_block_without_begin(self):
+        self.chkRaises('#end python','superfluous end python')
 
 #####################################################################
 if __name__ == '__main__':

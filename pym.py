@@ -11,8 +11,11 @@ import time
 start_time = time.clock()
 
 class PymException(Exception): pass
-class PymEndOfFile(PymException): pass
-class PymExit(PymException): pass
+class PymEndOfFile(PymException): pass      # For use by text being processed
+class PymExit(PymException): pass           # ditto
+
+class PymProcessingError(PymException): pass
+    # For reporting errors that pym detects in the input.
 
 # Default values of system variables
 PYM_PATH = []
@@ -34,9 +37,10 @@ ENVIRONMENT = {
 }
 
 def pym_die(message, loc):
-    """ Report errors to the console, then exit """
-    print "ERROR:", message, "in '%s'.", loc[0]
-    sys.exit(-1)
+    """ Convenience function for reporting fatal parsing errors. """
+    raise PymProcessingError(
+        "%s in '%s' at %d."%(message, loc[0], loc[1])
+    )
 # end pym_die
 
 def pym_expand_expressions(text, env, loc, out):
@@ -162,11 +166,11 @@ def pym_expand_string(filename, text, env, out, command_char='#'):
                     except PymEndOfFile:
                         py_pos = -1
                         break
-                    except NameError: raise     # doesn't have lineno
-                    except KeyError: raise      # ditto
-                    except ImportError: raise   # ditto
+                    except NameError: raise         # doesn't have lineno
+                    except KeyError: raise          # ditto
+                    except ImportError: raise       # ditto
                     except AttributeError: raise    # ditto
-                    except TypeError: raise     # ditto
+                    except TypeError: raise         # ditto
                     except Exception, error:
                         error.filename = loc[0]
                         error.lineno = error.lineno + loc[1]
