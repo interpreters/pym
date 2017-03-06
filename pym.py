@@ -222,6 +222,9 @@ def pym_expand_string(filename, text, env, out, command_char='#'):
 
             # TODO die on #elif, #else, or #endif without a preceding #if
             elif string.find(line, "elif") == 1:
+                if len(condstack)==0:
+                    pym_die("#elif without #if", loc)
+
                 if succeeded:   # Don't run this if an earlier clause won
                     cond = False
                 else:
@@ -232,12 +235,18 @@ def pym_expand_string(filename, text, env, out, command_char='#'):
                 loc = (filename, lnum)
 
             elif string.find(line, "else") == 1:
+                if len(condstack)==0:
+                    pym_die("#else without #if", loc)
+
                 cond = not succeeded    # true if nothing else matched
                 succeeded = True
                 tx_pos = end
                 loc = (filename, lnum)
 
             elif string.find(line, "endif") == 1:
+                if len(condstack)==0:
+                    pym_die("#endif without #if", loc)
+                        
                 cond = condstack.pop()
                 succeeded = succeeded_stack.pop()
 

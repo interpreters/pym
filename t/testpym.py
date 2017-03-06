@@ -356,6 +356,15 @@ class BadParse(TestCaseChk):
     def test_end_python_block_without_begin(self):
         self.chkRaises('#end python','superfluous end python')
 
+    def test_endif_without_if(self):
+        self.chkRaises('#endif','#endif without #if')
+
+    def test_elif_without_if(self):
+        self.chkRaises('#elif True','#elif without #if')
+
+    def test_else_without_if(self):
+        self.chkRaises('#else','#else without #if')
+
 #####################################################################
 if __name__ == '__main__':
     unittest.main()
