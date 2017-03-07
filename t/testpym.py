@@ -350,6 +350,7 @@ def x(): return "Spam"
 class BadParse(TestCaseChk):
     """ Tests of input that cannot be parsed. """
 
+    # Directives
     def test_unterminated_python_block(self):
         self.chkRaises('#begin python','unterminated python code')
 
@@ -364,6 +365,16 @@ class BadParse(TestCaseChk):
 
     def test_else_without_if(self):
         self.chkRaises('#else','#else without #if')
+
+    # Expressions
+
+    def test_unclosed_expression(self):
+        self.chkRaises('<[foo','unterminated python macro',
+                foo='This should not appear')
+
+    def test_unclosed_expression_2(self):
+        self.chkRaises('<[foo]><[bar','unterminated python macro',
+                foo=42, bar='This should not appear')
 
 #####################################################################
 if __name__ == '__main__':

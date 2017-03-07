@@ -58,6 +58,7 @@ def pym_expand_expressions(text, env, loc, out):
         pos = 0
         start = string.find(text, begin, pos)
 
+        # TODO check for ]> without preceding <[ ?
         while (start >= 0):
             stop = string.find(text, end, start+begin_len)
             if stop < 0: pym_die("unterminated python macro", loc)
@@ -74,20 +75,22 @@ def pym_expand_expressions(text, env, loc, out):
                 else:
                     value = eval(exp, env, env)
             except PymException: raise
-            except NameError: raise     # doesn't have lineno
-            except KeyError: raise      # ditto
-            except ImportError: raise           # ..
-            except AttributeError: raise        # ditto
-            except TypeError: raise     # ditto
+            except NameError: raise         # doesn't have lineno
+            except KeyError: raise          # ditto
+            except ImportError: raise       # ..
+            except AttributeError: raise    # ditto
+            except TypeError: raise         # ditto
             except Exception, error:
                 error.filename = loc[0]
                 error.lineno = error.lineno + loc[1] + \
                                len(string.split(text[0:start],'\n'))
                 raise
+
             pym_expand_expressions(str(value), env, loc, out)
+
             pos = stop+end_len
             start = string.find(text, begin, pos)
-        #end while
+        #end while start>0
 
         out.append(text[pos:])
 # end pym_expand_expressions()
@@ -220,7 +223,7 @@ def pym_expand_string(filename, text, env, out, command_char='#'):
                 tx_pos = end
                 loc = (filename, lnum)
 
-            # TODO die on #elif, #else, or #endif without a preceding #if
+            # TODO die on #elif after #else
             elif string.find(line, "elif") == 1:
                 if len(condstack)==0:
                     pym_die("#elif without #if", loc)
