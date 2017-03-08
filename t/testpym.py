@@ -36,6 +36,15 @@ class TestCaseChk(TestCase):
         )
     # end chkRaises()
 
+    def chkRaisesSpecific(self, text, extype, errmsg_regex, **env_overrides):
+        def inner(text, env_overrides):
+            return pym.pym_process_text(text, **env_overrides)
+
+        self.assertRaisesRegexp(
+                extype, errmsg_regex, inner,
+                text, env_overrides     # args to _inner_
+        )
+    # end chkRaises()
 ######################################################################
 class Basic(TestCaseChk):
     """Basic tests"""
@@ -347,8 +356,8 @@ def x(): return "Spam"
 # #end python; #elif or #endif before #if; #endif before #if; misspelled
 # command names (e.g., #elsif); commands without required arguments.
 
-class BadParse(TestCaseChk):
-    """ Tests of input that cannot be parsed. """
+class BadParseByPym(TestCaseChk):
+    """ Tests of input that cannot be parsed by pym. """
 
     # Directives
     def test_unterminated_python_block(self):
@@ -375,6 +384,13 @@ class BadParse(TestCaseChk):
     def test_unclosed_expression_2(self):
         self.chkRaises('<[foo]><[bar','unterminated python macro',
                 foo=42, bar='This should not appear')
+
+#####################################################################
+class BadPythonExpression(TestCaseChk):
+    """ Tests of expressions that are invalid in Python. """
+
+    def test_unknown_var(self):
+        self.chkRaisesSpecific('<[foo]>',NameError, 'foo')
 
 #####################################################################
 if __name__ == '__main__':
