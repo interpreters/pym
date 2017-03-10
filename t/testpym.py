@@ -390,7 +390,18 @@ class BadPythonExpression(TestCaseChk):
     """ Tests of expressions that are invalid in Python. """
 
     def test_unknown_var(self):
-        self.chkRaisesSpecific('<[foo]>',NameError, 'foo')
+        self.chkRaisesSpecific('<[foo]>', NameError, 'foo')
+
+    def test_missing_unary_operand(self):
+        self.chkRaisesSpecific('<[-]>', SyntaxError, 'unexpected EOF')
+
+    def test_missing_binary_operand(self):
+        self.chkRaisesSpecific('<[foo-]>',
+                SyntaxError, 'unexpected EOF', foo=42)
+
+    def test_missing_binary_operand_2(self):
+        self.chkRaisesSpecific('<[*foo]>',
+                SyntaxError, 'invalid syntax', foo=42)
 
 #####################################################################
 if __name__ == '__main__':
