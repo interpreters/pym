@@ -403,6 +403,20 @@ class BadPythonExpression(TestCaseChk):
         self.chkRaisesSpecific('<[*foo]>',
                 SyntaxError, 'invalid syntax', foo=42)
 
+    def test_unclosed_paren(self):
+        self.chkRaisesSpecific('<[(foo+foo]>',
+                SyntaxError, 'unexpected EOF', foo=42)
+
+#####################################################################
+class BadPythonBlock(TestCaseChk):
+    """ Tests of blocks that are invalid in Python. """
+
+    def test_unknown_var(self):
+        self.chkRaisesSpecific("""
+#begin python
+bar = foo
+#end python""", NameError, 'foo')
+
 #####################################################################
 if __name__ == '__main__':
     unittest.main()

@@ -119,6 +119,8 @@ def pym_expand_file(filename, env, out):
 def pym_expand_string(filename, text, env, out, command_char='#'):
     """ Process the (possibly multi-line) string _text_ in environment _env_.
         Append the result to list _out_. """
+    # TODO add option to output a leader plus "##<loc>" at each line,
+    # so the output lines can be automatically mapped to the input lines.
     lnum = 1
     py_pos = -1
     tx_pos = 0      # start of normal text
@@ -249,7 +251,7 @@ def pym_expand_string(filename, text, env, out, command_char='#'):
             elif string.find(line, "endif") == 1:
                 if len(condstack)==0:
                     pym_die("#endif without #if", loc)
-                        
+
                 cond = condstack.pop()
                 succeeded = succeeded_stack.pop()
 
